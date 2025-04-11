@@ -1,0 +1,19 @@
+{% extends 'main/base.html' %}
+{% block title %}Главная - Нефтьче{% endblock %}
+{% block content %}
+<h1>Добро пожаловать в Дворец культуры «Нефтьче»</h1>
+<div class="row">
+  {% for news in latest_news %}
+  <div class="col-md-4">
+    <div class="card mb-4">
+      {% if news.image %}<img src="{{ news.image.url }}" class="card-img-top">{% endif %}
+      <div class="card-body">
+        <h5 class="card-title">{{ news.title }}</h5>
+        <p class="card-text">{{ news.content|truncatewords:20 }}</p>
+        <a href="{% url 'news_detail' news.id %}" class="btn btn-primary">Читать далее</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

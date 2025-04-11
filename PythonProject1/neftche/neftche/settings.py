@@ -55,10 +55,11 @@ ROOT_URLCONF = 'neftche.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
+        'DIRS': [],  # Если шаблоны лежат в приложениях, здесь можно оставить пустым
+        'APP_DIRS': True,  # Это ключевой параметр, который позволяет Django искать шаблоны в папках app/templates/
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -66,6 +67,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'neftche.wsgi.application'
 
