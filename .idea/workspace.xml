@@ -5,21 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="69a2fa03-f5fd-4a77-a61c-77c8b0116b0c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/static/main/css/style.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/login.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/news_form.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/db.sqlite3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/forms.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/admin/admin_panel.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/db.sqlite3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/migrations/0002_role_alter_news_image_user_news_author.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/home.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/news_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/news_list.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/auth/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/news_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/news_detail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/auth/register.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/neftche/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/neftche/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/neftche/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/neftche/urls.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,6 +29,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -45,7 +45,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Arc3228/dk.git&quot;,
-    &quot;accountId&quot;: &quot;03f79855-1ce7-48d6-81f5-af3ed13f79bf&quot;
+    &quot;accountId&quot;: &quot;6742a1ee-459d-4189-8062-22023c7b9929&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -60,14 +60,20 @@
   "keyToString": {
     "DefaultHtmlFileTemplate": "HTML File",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/Admin/PycharmProjects/bn"
+    "last_opened_file_path": "C:/Users/rufad/PycharmProjects/dk"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\rufad\PycharmProjects\dk\PythonProject1\neftche\main\templates\auth" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-98f27166c754-ba05f1cad1b1-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.21829.153" />
+        <option value="bundled-python-sdk-a5bc9544c897-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.23654.177" />
       </set>
     </attachedChunks>
   </component>

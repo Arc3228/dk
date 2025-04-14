@@ -1,0 +1,13 @@
+{% extends 'main/base.html' %}
+{% block title %}Админ панель{% endblock %}
+{% block content %}
+<h1>Админ панель</h1>
+<div class="row">
+    <nav>
+        <ul>
+            <li><a href="{% url 'news_create' %}">Cоздать новость</a></li>
+            <li><a href="{% url 'news_create' %}">Cоздать событие</a></li>
+        </ul>
+    </nav>
+</div>
+{% endblock %}

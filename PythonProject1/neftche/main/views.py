@@ -1,5 +1,6 @@
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login, authenticate
 from django.shortcuts import render, get_object_or_404, redirect
+from .forms import NewsForm, SignUpForm, LoginForm
 from .models import Circle, News
 from django.contrib.auth.decorators import login_required
 
@@ -30,13 +31,30 @@ def news_detail(request, news_id):
 
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = SignUpForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('login')
+            user = form.save()          # Сохраняем нового пользователя
+            login(request, user)        # Выполняем вход
+            return redirect('home')     # Перенаправляем на главную страницу
     else:
-        form = UserCreationForm()
+        form = SignUpForm()
     return render(request, 'auth/register.html', {'form': form})
+
+def login_view(request):
+    form = LoginForm(data=request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(username=username, password=password) # Проверяем учетные данные
+            if user is not None:
+                login(request, user)     # Выполняем вход
+                return redirect('home')  # Перенаправляем на главную страницу
+    return render(request, 'auth/login.html', {'form': form})
+
+@login_required
+def admin_panel(request):
+    return render(request, 'admin/admin_panel.html')
 
 @login_required
 def news_create(request):

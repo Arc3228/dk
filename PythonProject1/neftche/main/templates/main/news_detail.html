@@ -5,4 +5,9 @@
 <p class="text-muted">{{ news.pub_date|date:"d.m.Y H:i" }}</p>
 {% if news.image %}<img src="{{ news.image.url }}" class="img-fluid mb-3">{% endif %}
 <div>{{ news.content|linebreaks }}</div>
+
+{% if user.is_superuser %}
+    <a href="{% url 'news_edit' news.id %}" class="">Редактировать</a>
+    <a href="{% url 'news_delete' news.id %}" class="">Удалить</a>
+{% endif %}
 {% endblock %}
