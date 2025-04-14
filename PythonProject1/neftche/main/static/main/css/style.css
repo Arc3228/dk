@@ -1,0 +1,14 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+}
+header {
+    background: linear-gradient(90deg, #004080, #0066cc);
+}
+footer {
+    background: #002b55;
+}
+.card img {
+    height: 200px;
+    object-fit: cover;
+}
