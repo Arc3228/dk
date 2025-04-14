@@ -10,4 +10,26 @@
   </form>
   <p class="mt-3">Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
 </div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+        const fields = document.querySelectorAll("input, select, textarea");
+
+        fields.forEach(field => {
+            field.addEventListener("input", function () {
+                if (field.checkValidity()) {
+                    field.classList.remove("is-invalid");
+                    field.classList.add("is-valid");
+                } else {
+                    field.classList.remove("is-valid");
+                    field.classList.add("is-invalid");
+                }
+            });
+            field.addEventListener("blur", function () {
+                if (!field.checkValidity()) {
+                    field.classList.add("is-invalid");
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

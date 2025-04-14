@@ -1,0 +1,13 @@
+{% extends 'main/base.html' %}
+{% block title %}{{ news.title }} - Нефтьче{% endblock %}
+{% block content %}
+<h1>{{ events.title }}</h1>
+<p class="text-muted">{{ events.pub_date|date:"d.m.Y H:i" }}</p>
+{% if events.image %}<img src="{{ events.image.url }}" class="img-fluid mb-3">{% endif %}
+<div>{{ events.content|linebreaks }}</div>
+
+{% if user.is_superuser %}
+    <a href="{% url 'events_edit' events.id %}" class="">Редактировать</a>
+    <a href="{% url 'events_delete' events.id %}" class="">Удалить</a>
+{% endif %}
+{% endblock %}

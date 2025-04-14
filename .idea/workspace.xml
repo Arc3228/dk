@@ -4,21 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="69a2fa03-f5fd-4a77-a61c-77c8b0116b0c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/forms.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/admin/admin_panel.html" afterDir="false" />
+    <list default="true" id="69a2fa03-f5fd-4a77-a61c-77c8b0116b0c" name="Changes" comment="Вывод новостей">
+      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/events_detail.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/db.sqlite3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/migrations/0002_role_alter_news_image_user_news_author.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/auth/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/auth/register.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/auth/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/news_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/news_detail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/auth/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/neftche/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/neftche/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,10 +53,13 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/rufad/PycharmProjects/dk"
+    "last_opened_file_path": "C:/Users/rufad/PycharmProjects/dk/PythonProject1/neftche/main/templates/main"
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\rufad\PycharmProjects\dk\PythonProject1\neftche\main\templates\main" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\rufad\PycharmProjects\dk\PythonProject1\neftche\main\templates\auth" />
     </key>
@@ -86,6 +80,19 @@
       <option name="presentableId" value="Default" />
       <updated>1744437267239</updated>
     </task>
+    <task id="LOCAL-00001" summary="Вывод новостей">
+      <option name="closed" value="true" />
+      <created>1744639406024</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1744639406024</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Вывод новостей" />
+    <option name="LAST_COMMIT_MESSAGE" value="Вывод новостей" />
   </component>
 </project>
