@@ -1,14 +1,16 @@
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import NewsForm, SignUpForm, LoginForm, EventsForm
-from .models import Circle, News, Events
+from .forms import NewsForm, SignUpForm, LoginForm, EventsForm, TicketPurchaseForm, BalanceTopUpForm
+from django.contrib import messages
+from .models import Circle, News, Events, Ticket
 from django.contrib.auth.decorators import login_required
 
 
 
 def home(request):
     latest_news = News.objects.order_by('-pub_date')[:3]
-    return render(request, 'main/home.html', {'latest_news': latest_news})
+    events = Events.objects.all().order_by('-pub_date')[:5]
+    return render(request, 'main/home.html', {'latest_news': latest_news, 'events': events})
 
 
 def circles(request):
@@ -133,3 +135,44 @@ def events_delete(request, pk):
     if request.user == events.author:
         events.delete()
     return redirect('home')
+
+@login_required
+def buy_ticket(request, events_id):
+    event = get_object_or_404(Events, id=events_id)
+
+    if request.method == 'POST':
+        if request.user.balance >= event.price:
+            Ticket.objects.create(user=request.user, event=event)
+            request.user.balance -= event.price
+            request.user.save()
+            messages.success(request, f'Вы успешно купили билет на "{event.title}"!')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Недостаточно средств для покупки билета.')
+            return redirect('top_up_balance')
+
+    return render(request, 'main/buy_ticket.html', {'event': event})
+
+@login_required
+def profile(request):
+    user = request.user
+    tickets = user.tickets.all()
+    return render(request, 'main/profile.html', {
+        'user': user,
+        'tickets': tickets,
+    })
+
+
+@login_required
+def top_up_balance(request):
+    if request.method == 'POST':
+        form = BalanceTopUpForm(request.POST)
+        if form.is_valid():
+            amount = form.cleaned_data['amount']
+            request.user.balance += amount
+            request.user.save()
+            messages.success(request, f'Баланс успешно пополнен на {amount}₽')
+            return redirect('profile')
+    else:
+        form = BalanceTopUpForm()
+    return render(request, 'main/top_up_balance.html', {'form': form})

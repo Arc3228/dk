@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import News, CustomUser, Events
+from .models import News, CustomUser, Events, Ticket
 
 
 class SignUpForm(UserCreationForm):
@@ -40,7 +40,7 @@ class NewsForm(forms.ModelForm):
 class EventsForm(forms.ModelForm):
     class Meta:
         model = Events
-        fields = ['title', 'content', 'image']
+        fields = ['title', 'content', 'image', 'price']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -53,4 +53,17 @@ class EventsForm(forms.ModelForm):
             'image': forms.ClearableFileInput(attrs={
                 'class': 'form-control'
             }),
+            'price': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Введите цену билета'
+            }),
         }
+
+class TicketPurchaseForm(forms.ModelForm):
+    class Meta:
+        model = Ticket
+        fields = ['quantity']
+
+
+class BalanceTopUpForm(forms.Form):
+    amount = forms.DecimalField(max_digits=10, decimal_places=2, label="Сумма пополнения")

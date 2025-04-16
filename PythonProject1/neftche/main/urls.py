@@ -11,6 +11,9 @@ urlpatterns = [
     path('news/detail/<int:news_id>', views.news_detail, name='news_detail'),
     path('events', views.events_list, name='events_list'),
     path('events/detail/<int:events_id>', views.events_detail, name='events_detail'),
+    path('events/<int:events_id>/buy/', views.buy_ticket, name='buy_ticket'),
+    path('profile/', views.profile, name='profile'),
+    path('top-up/', views.top_up_balance, name='top_up_balance'),
 
     # админ
     path('admin_panel', views.admin_panel, name='admin_panel'),
@@ -20,5 +23,4 @@ urlpatterns = [
     path('admin_panel/events/create/', views.events_create, name='events_create'),
     path('admin_panel/events/<int:pk>/edit/', views.events_edit, name='events_edit'),
     path('admin_panel/events/<int:pk>/delete/', views.events_delete, name='events_delete'),
-
 ]

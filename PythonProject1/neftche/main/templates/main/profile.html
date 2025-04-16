@@ -1,0 +1,18 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<h2>Профиль пользователя: {{ user.username }}</h2>
+<h3><strong>Баланс:</strong> {{ user.balance }} ₽</h3>
+<h3>Мои билеты</h3>
+<ul class="list-group">
+    {% for ticket in tickets %}
+        <li class="list-group-item">
+            <strong>{{ ticket.event.title }}</strong> – {{ ticket.quantity }} шт., куплено {{ ticket.purchased_at|date:"d.m.Y H:i" }}
+        </li>
+    {% empty %}
+        <li class="list-group-item">Вы ещё не купили ни одного билета.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

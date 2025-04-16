@@ -4,6 +4,7 @@
 <h2 class="text-center">Добро пожаловать в ДК "Нефтьче"</h2>
 <div class="row">
     {% for news in latest_news %}
+    <h2>Наши новости</h2>
     <div class="col-md-4">
         <div class="card">
             <img src="{{ news.image.url }}" class="card-img-top">
@@ -15,5 +16,21 @@
         </div>
     </div>
     {% endfor %}
+
 </div>
+    {% for event in events %}
+<div class="col-md-4">
+    <h2>Предстоящие события</h2>
+    <div class="card">
+        {% if event.image %}
+            <img src="{{ event.image.url }}" class="card-img-top">
+        {% endif %}
+        <div class="card-body">
+            <h5>{{ event.title }}</h5>
+            <p>{{ event.description|truncatewords:20 }}</p>
+            <a href="{% url 'events_detail' event.id %}" class="btn btn-primary">Подробнее</a>
+        </div>
+    </div>
+</div>
+{% endfor %}
 {% endblock %}
