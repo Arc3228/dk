@@ -1,7 +1,7 @@
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import NewsForm, SignUpForm, LoginForm
-from .models import Circle, News
+from .forms import NewsForm, SignUpForm, LoginForm, EventsForm
+from .models import Circle, News, Events
 from django.contrib.auth.decorators import login_required
 
 
@@ -28,6 +28,16 @@ def news_list(request):
 def news_detail(request, news_id):
     item = get_object_or_404(News, id=news_id)
     return render(request, 'main/news_detail.html', {'news': item})
+
+
+def events_list(request):
+    events_list = Events.objects.order_by('-pub_date')
+    return render(request, 'main/events_list.html', {'events_list': events_list})
+
+
+def events_detail(request, news_id):
+    item = get_object_or_404(News, id=news_id)
+    return render(request, 'main/events_detail.html', {'events': item})
 
 def register(request):
     if request.method == 'POST':
@@ -88,4 +98,38 @@ def news_delete(request, pk):
     news = News.objects.get(pk=pk)
     if request.user == news.author:
         news.delete()
+    return redirect('home')
+
+@login_required
+def events_create(request):
+    if request.method == 'POST':
+        form = EventsForm(request.POST, request.FILES)
+        if form.is_valid():
+            events = form.save(commit=False)
+            events.author = request.user
+            events.save()
+            return redirect('home')
+    else:
+        form = EventsForm()
+    return render(request, 'main/events_form.html', {'form': form})
+
+@login_required
+def events_edit(request, pk):
+    events = Events.objects.get(pk=pk)
+    if request.user != events.author:
+        return redirect('home')
+    if request.method == 'POST':
+        form = EventsForm(request.POST, request.FILES, instance=events)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = EventsForm(instance=events)
+    return render(request, 'main/events_form.html', {'form': form})
+
+@login_required
+def events_delete(request, pk):
+    events = Events.objects.get(pk=pk)
+    if request.user == events.author:
+        events.delete()
     return redirect('home')
