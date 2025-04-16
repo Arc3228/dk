@@ -35,8 +35,8 @@ def events_list(request):
     return render(request, 'main/events_list.html', {'events_list': events_list})
 
 
-def events_detail(request, news_id):
-    item = get_object_or_404(News, id=news_id)
+def events_detail(request, events_id):
+    item = get_object_or_404(Events, id=events_id)
     return render(request, 'main/events_detail.html', {'events': item})
 
 def register(request):
