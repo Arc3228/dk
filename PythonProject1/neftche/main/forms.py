@@ -1,6 +1,7 @@
+from datetime import timedelta, datetime
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import News, CustomUser, Events, Ticket
+from .models import News, CustomUser, Events, Ticket, HallBooking
 
 
 class SignUpForm(UserCreationForm):
@@ -67,3 +68,34 @@ class TicketPurchaseForm(forms.ModelForm):
 
 class BalanceTopUpForm(forms.Form):
     amount = forms.DecimalField(max_digits=10, decimal_places=2, label="Сумма пополнения")
+
+
+class HallBookingForm(forms.ModelForm):
+    class Meta:
+        model = HallBooking
+        fields = ['event_name', 'date', 'time', 'duration']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        date = cleaned_data.get('date')
+        time = cleaned_data.get('time')
+        duration = cleaned_data.get('duration')
+
+        if date and time and duration:
+            start_new = datetime.combine(date, time)
+            end_new = start_new + timedelta(hours=duration)
+
+            bookings = HallBooking.objects.filter(date=date)
+
+            for booking in bookings:
+                start_existing = datetime.combine(booking.date, booking.time)
+                end_existing = start_existing + timedelta(hours=booking.duration)
+
+                # Проверка на пересечение по времени
+                if (start_new < end_existing and end_new > start_existing):
+                    raise forms.ValidationError(
+                        f"Зал уже забронирован на {booking.time.strftime('%H:%M')} "
+                        f"до {(end_existing).strftime('%H:%M')}"
+                    )
+
+        return cleaned_data

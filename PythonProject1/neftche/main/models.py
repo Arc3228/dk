@@ -42,3 +42,15 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f"{self.user} — {self.event.title} ({self.quantity})"
+
+
+class HallBooking(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    event_name = models.CharField(max_length=255)
+    date = models.DateField()
+    time = models.TimeField()
+    duration = models.PositiveIntegerField(help_text="Продолжительность в часах")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.event_name} ({self.date} {self.time}) от {self.user}"

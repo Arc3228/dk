@@ -1,3 +1,5 @@
+from tkinter.font import names
+
 from django.contrib.auth.views import LogoutView
 from django.urls import path, include
 from . import views
@@ -14,6 +16,9 @@ urlpatterns = [
     path('events/<int:events_id>/buy/', views.buy_ticket, name='buy_ticket'),
     path('profile/', views.profile, name='profile'),
     path('top-up/', views.top_up_balance, name='top_up_balance'),
+    path('book-hall/', views.book_hall, name='book_hall'),
+    path('bookings/slots/', views.get_booked_slots, name='get_booked_slots'),
+
 
     # админ
     path('admin_panel', views.admin_panel, name='admin_panel'),
@@ -23,4 +28,7 @@ urlpatterns = [
     path('admin_panel/events/create/', views.events_create, name='events_create'),
     path('admin_panel/events/<int:pk>/edit/', views.events_edit, name='events_edit'),
     path('admin_panel/events/<int:pk>/delete/', views.events_delete, name='events_delete'),
+    path('hall-bookings/', views.hall_bookings_view, name='hall_bookings'),
+    path('edit-booking/<int:booking_id>/', views.edit_booking, name='edit_booking'),
+    path('delete-booking/<int:booking_id>/', views.delete_booking, name='delete_booking'),
 ]

@@ -16,6 +16,7 @@
             <nav>
                 <a href="{% url 'news_list' %}" class="text-white me-3">Новости</a>
                 <a href="/events" class="text-white">События</a>
+                <a href="{% url 'book_hall' %}" class="text-white me-3">Бронирование зала</a>
             </nav>
             <nav>
                 {% if user.is_authenticated %}

@@ -4,12 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="69a2fa03-f5fd-4a77-a61c-77c8b0116b0c" name="Changes" comment="Цена у билетов">
+    <list default="true" id="69a2fa03-f5fd-4a77-a61c-77c8b0116b0c" name="Changes" comment="Стили">
+      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/book_hall.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/delete_booking.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/edit_booking.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/hall_bookings.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/static/main/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/static/main/css/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/admin/admin_panel.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/admin/admin_panel.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/circles.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/contacts.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -120,7 +130,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744809627442</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Стили">
+      <option name="closed" value="true" />
+      <created>1744913838841</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1744913838841</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -128,6 +146,7 @@
     <MESSAGE value="." />
     <MESSAGE value="События" />
     <MESSAGE value="Цена у билетов" />
-    <option name="LAST_COMMIT_MESSAGE" value="Цена у билетов" />
+    <MESSAGE value="Стили" />
+    <option name="LAST_COMMIT_MESSAGE" value="Стили" />
   </component>
 </project>

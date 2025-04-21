@@ -1,9 +1,14 @@
+from datetime import datetime, timedelta
 from django.contrib.auth import login, authenticate
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import NewsForm, SignUpForm, LoginForm, EventsForm, TicketPurchaseForm, BalanceTopUpForm
+from . import forms
+from .forms import NewsForm, SignUpForm, LoginForm, EventsForm, TicketPurchaseForm, BalanceTopUpForm, HallBookingForm
 from django.contrib import messages
-from .models import Circle, News, Events, Ticket
+from .models import Circle, News, Events, Ticket, HallBooking
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
+
 
 
 
@@ -11,15 +16,6 @@ def home(request):
     latest_news = News.objects.order_by('-pub_date')[:3]
     events = Events.objects.all().order_by('-pub_date')[:5]
     return render(request, 'main/home.html', {'latest_news': latest_news, 'events': events})
-
-
-def circles(request):
-    circles = Circle.objects.all()
-    return render(request, 'main/circles.html', {'circles': circles})
-
-
-def contacts(request):
-    return render(request, 'main/contacts.html')
 
 
 def news_list(request):
@@ -41,6 +37,7 @@ def events_detail(request, events_id):
     item = get_object_or_404(Events, id=events_id)
     return render(request, 'main/events_detail.html', {'events': item})
 
+
 def register(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -51,6 +48,7 @@ def register(request):
     else:
         form = SignUpForm()
     return render(request, 'auth/register.html', {'form': form})
+
 
 def login_view(request):
     form = LoginForm(data=request.POST or None)
@@ -64,9 +62,11 @@ def login_view(request):
                 return redirect('home')  # Перенаправляем на главную страницу
     return render(request, 'auth/login.html', {'form': form})
 
+
 @login_required
 def admin_panel(request):
     return render(request, 'admin/admin_panel.html')
+
 
 @login_required
 def news_create(request):
@@ -80,6 +80,7 @@ def news_create(request):
     else:
         form = NewsForm()
     return render(request, 'main/news_form.html', {'form': form})
+
 
 @login_required
 def news_edit(request, pk):
@@ -95,12 +96,14 @@ def news_edit(request, pk):
         form = NewsForm(instance=news)
     return render(request, 'main/news_form.html', {'form': form})
 
+
 @login_required
 def news_delete(request, pk):
     news = News.objects.get(pk=pk)
     if request.user == news.author:
         news.delete()
     return redirect('home')
+
 
 @login_required
 def events_create(request):
@@ -114,6 +117,7 @@ def events_create(request):
     else:
         form = EventsForm()
     return render(request, 'main/events_form.html', {'form': form})
+
 
 @login_required
 def events_edit(request, pk):
@@ -129,12 +133,14 @@ def events_edit(request, pk):
         form = EventsForm(instance=events)
     return render(request, 'main/events_form.html', {'form': form})
 
+
 @login_required
 def events_delete(request, pk):
     events = Events.objects.get(pk=pk)
     if request.user == events.author:
         events.delete()
     return redirect('home')
+
 
 @login_required
 def buy_ticket(request, events_id):
@@ -152,6 +158,7 @@ def buy_ticket(request, events_id):
             return redirect('top_up_balance')
 
     return render(request, 'main/buy_ticket.html', {'event': event})
+
 
 @login_required
 def profile(request):
@@ -176,3 +183,92 @@ def top_up_balance(request):
     else:
         form = BalanceTopUpForm()
     return render(request, 'main/top_up_balance.html', {'form': form})
+
+def clean(self):
+    cleaned_data = super().clean()
+    date = cleaned_data.get('date')
+    time = cleaned_data.get('time')
+    duration = cleaned_data.get('duration')
+
+    if date and time and duration:
+        start_new = datetime.combine(date, time)
+        end_new = start_new + timedelta(hours=duration)
+
+        bookings = HallBooking.objects.filter(date=date)
+
+        for booking in bookings:
+            start_existing = datetime.combine(booking.date, booking.time)
+            end_existing = start_existing + timedelta(hours=booking.duration)
+
+            if start_new < end_existing and end_new > start_existing:
+                raise forms.ValidationError(
+                    f"Зал уже забронирован с {start_existing.strftime('%H:%M')} до {end_existing.strftime('%H:%M')}."
+                )
+
+    return cleaned_data
+
+
+@login_required
+def book_hall(request):
+    form = HallBookingForm(request.POST or None)
+    selected_date = request.GET.get('date')
+
+    if selected_date:
+        try:
+            date_obj = datetime.strptime(selected_date, '%Y-%m-%d').date()
+            bookings = HallBooking.objects.filter(date=date_obj).order_by('time')
+        except ValueError:
+            bookings = HallBooking.objects.all().order_by('date', 'time')
+    else:
+        bookings = HallBooking.objects.all().order_by('date', 'time')
+
+    # ➕ Добавляем расчет времени окончания
+    for booking in bookings:
+        start = datetime.combine(booking.date, booking.time)
+        booking.end_time = (start + timedelta(hours=booking.duration)).time()
+
+    if request.method == 'POST' and form.is_valid():
+        booking = form.save(commit=False)
+        booking.user = request.user
+        booking.save()
+        messages.success(request, "Зал успешно забронирован.")
+        return redirect('book_hall')
+
+    return render(request, 'main/book_hall.html', {
+        'form': form,
+        'bookings': bookings,
+        'selected_date': selected_date,
+    })
+
+
+
+@login_required
+def hall_bookings_view(request):
+    bookings = HallBooking.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'main/hall_bookings.html', {'bookings': bookings})
+
+def get_booked_slots(request):
+    bookings = HallBooking.objects.all().values('date', 'start_time', 'end_time')
+    return JsonResponse(list(bookings), safe=False)
+
+
+@staff_member_required
+def edit_booking(request, booking_id):
+    booking = get_object_or_404(HallBooking, id=booking_id)
+    if request.method == 'POST':
+        form = HallBookingForm(request.POST, instance=booking)
+        if form.is_valid():
+            form.save()
+            return redirect('main/hall_bookings.html')
+    else:
+        form = HallBookingForm(instance=booking)
+    return render(request, 'main/edit_booking.html', {'form': form, 'booking': booking})
+
+
+@staff_member_required
+def delete_booking(request, booking_id):
+    booking = get_object_or_404(HallBooking, id=booking_id)
+    if request.method == 'POST':
+        booking.delete()
+        return redirect('main/hall_bookings.html')
+    return render(request, 'main/delete_booking.html', {'booking': booking})

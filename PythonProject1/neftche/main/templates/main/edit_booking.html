@@ -1,0 +1,13 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Редактировать бронирование: {{ booking.event_name }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Сохранить</button>
+        <a href="{% url 'hall_bookings' %}" class="btn btn-secondary">Назад</a>
+    </form>
+</div>
+{% endblock %}
