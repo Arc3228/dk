@@ -45,12 +45,13 @@ class Ticket(models.Model):
 
 
 class HallBooking(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     event_name = models.CharField(max_length=255)
     date = models.DateField()
     time = models.TimeField()
     duration = models.PositiveIntegerField(help_text="Продолжительность в часах")
     created_at = models.DateTimeField(auto_now_add=True)
+    check_oborydovanie = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.event_name} ({self.date} {self.time}) от {self.user}"

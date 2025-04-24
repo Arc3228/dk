@@ -10,8 +10,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 
 
-
-
 def home(request):
     latest_news = News.objects.order_by('-pub_date')[:3]
     events = Events.objects.all().order_by('-pub_date')[:5]
@@ -164,10 +162,14 @@ def buy_ticket(request, events_id):
 def profile(request):
     user = request.user
     tickets = user.tickets.all()
+    hall_bookings = HallBooking.objects.filter(user=user)
+
     return render(request, 'main/profile.html', {
         'user': user,
         'tickets': tickets,
+        'hall_bookings': hall_bookings,
     })
+
 
 
 @login_required
@@ -244,7 +246,7 @@ def book_hall(request):
 
 @login_required
 def hall_bookings_view(request):
-    bookings = HallBooking.objects.filter(user=request.user).order_by('-created_at')
+    bookings = HallBooking.objects.all().filter().order_by('date')
     return render(request, 'main/hall_bookings.html', {'bookings': bookings})
 
 def get_booked_slots(request):
@@ -259,7 +261,7 @@ def edit_booking(request, booking_id):
         form = HallBookingForm(request.POST, instance=booking)
         if form.is_valid():
             form.save()
-            return redirect('main/hall_bookings.html')
+            return redirect('hall_bookings')
     else:
         form = HallBookingForm(instance=booking)
     return render(request, 'main/edit_booking.html', {'form': form, 'booking': booking})
@@ -270,5 +272,5 @@ def delete_booking(request, booking_id):
     booking = get_object_or_404(HallBooking, id=booking_id)
     if request.method == 'POST':
         booking.delete()
-        return redirect('main/hall_bookings.html')
+        return redirect('hall_bookings')
     return render(request, 'main/delete_booking.html', {'booking': booking})

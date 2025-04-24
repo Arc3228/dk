@@ -73,7 +73,16 @@ class BalanceTopUpForm(forms.Form):
 class HallBookingForm(forms.ModelForm):
     class Meta:
         model = HallBooking
-        fields = ['event_name', 'date', 'time', 'duration']
+        fields = ['event_name', 'date', 'time', 'duration', 'check_oborydovanie']
+
+        labels = {
+            'event_name': 'Название мероприятия',
+            'date': 'Дата',
+            'time': 'Время проведения',
+            'duration': 'Продолжительность',
+            'check_oborydovanie': 'Нужно оборудование',
+        }
+
 
     def clean(self):
         cleaned_data = super().clean()
@@ -85,17 +94,20 @@ class HallBookingForm(forms.ModelForm):
             start_new = datetime.combine(date, time)
             end_new = start_new + timedelta(hours=duration)
 
+            # Исключаем текущее бронирование из проверки
             bookings = HallBooking.objects.filter(date=date)
+            if self.instance.pk:
+                bookings = bookings.exclude(pk=self.instance.pk)
 
             for booking in bookings:
                 start_existing = datetime.combine(booking.date, booking.time)
                 end_existing = start_existing + timedelta(hours=booking.duration)
 
-                # Проверка на пересечение по времени
-                if (start_new < end_existing and end_new > start_existing):
+                if start_new < end_existing and end_new > start_existing:
                     raise forms.ValidationError(
                         f"Зал уже забронирован на {booking.time.strftime('%H:%M')} "
                         f"до {(end_existing).strftime('%H:%M')}"
                     )
 
         return cleaned_data
+
