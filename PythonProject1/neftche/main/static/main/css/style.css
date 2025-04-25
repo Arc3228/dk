@@ -53,3 +53,9 @@ a:hover {
 .form-control::placeholder {
     color: #888;
 }
+
+.logout_btn {
+    border-radius: 5px;
+    background-color: #e30613;
+    color: white;
+}

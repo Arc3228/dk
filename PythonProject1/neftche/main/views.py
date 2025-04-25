@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from . import forms
 from .forms import NewsForm, SignUpForm, LoginForm, EventsForm, TicketPurchaseForm, BalanceTopUpForm, HallBookingForm
 from django.contrib import messages
-from .models import Circle, News, Events, Ticket, HallBooking
+from .models import News, Events, Ticket, HallBooking
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 

@@ -9,7 +9,6 @@
                 <th>Событие</th>
                 <th>Дата</th>
                 <th>Время</th>
-                <th>До</th>
                 <th>Длительность (ч)</th>
                 <th>Оборудование</th>
                 <th>Действия</th>
@@ -21,17 +20,6 @@
                 <td>{{ booking.event_name }}</td>
                 <td>{{ booking.date }}</td>
                 <td>{{ booking.time|time:"H:i" }}</td>
-                <td>
-                    {% with booking.date|date:"Y-m-d" as d %}
-                        {% with booking.time|date:"H:i" as t %}
-                            {% with booking.duration|floatformat:0 as dur %}
-                                {% with booking.time|add:"0"|date:"U"|add:dur|date:"H:i" as end_time %}
-                                    {{ end_time }}
-                                {% endwith %}
-                            {% endwith %}
-                        {% endwith %}
-                    {% endwith %}
-                </td>
                 <td>{{ booking.duration }}</td>
                 <td>
                     {{ booking.check_oborydovanie|yesno:"Да,Нет" }}
