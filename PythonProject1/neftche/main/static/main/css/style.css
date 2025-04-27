@@ -59,3 +59,12 @@ a:hover {
     background-color: #e30613;
     color: white;
 }
+
+.home_card {
+width: 410px;
+}
+
+.card-img-top{
+width: 410px;
+height: 275px;
+}

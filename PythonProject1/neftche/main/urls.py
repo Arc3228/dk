@@ -18,7 +18,8 @@ urlpatterns = [
     path('top-up/', views.top_up_balance, name='top_up_balance'),
     path('book-hall/', views.book_hall, name='book_hall'),
     path('bookings/slots/', views.get_booked_slots, name='get_booked_slots'),
-
+    path('seat/payment/<int:seat_id>/', views.seat_payment, name='seat_payment'),
+    path('tickets/<int:ticket_id>/', views.ticket_detail, name='ticket_detail'),
 
     # админ
     path('admin_panel', views.admin_panel, name='admin_panel'),

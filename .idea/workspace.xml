@@ -4,13 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="69a2fa03-f5fd-4a77-a61c-77c8b0116b0c" name="Changes" comment="Бронь зала">
+    <list default="true" id="69a2fa03-f5fd-4a77-a61c-77c8b0116b0c" name="Changes" comment="Стили">
+      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/bilet.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/seat_payment.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/ticket_detail.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/static/main/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/static/main/css/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/hall_bookings.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/hall_bookings.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/book_hall.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/book_hall.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/events_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/events_detail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/profile.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/neftche/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/neftche/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,7 +155,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745490329251</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Стили">
+      <option name="closed" value="true" />
+      <created>1745565085861</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1745565085861</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -153,8 +171,8 @@
     <MESSAGE value="." />
     <MESSAGE value="События" />
     <MESSAGE value="Цена у билетов" />
-    <MESSAGE value="Стили" />
     <MESSAGE value="Бронь зала" />
-    <option name="LAST_COMMIT_MESSAGE" value="Бронь зала" />
+    <MESSAGE value="Стили" />
+    <option name="LAST_COMMIT_MESSAGE" value="Стили" />
   </component>
 </project>

@@ -6,35 +6,40 @@
 <h2>Профиль пользователя: {{ user.username }}</h2>
 <h3><strong>Баланс:</strong> {{ user.balance }} ₽</h3>
 <h3>
-    <button class="btn btn-link" onclick="toggleTickets()">Показать билеты</button>
+
 </h3>
-<ul id="ticket-list" class="list-group" style="display: none;">
+<ul class="list-group" >
     {% for ticket in tickets %}
         <li class="list-group-item">
-            <strong>{{ ticket.event.title }}</strong> – {{ ticket.quantity }} шт., куплено {{ ticket.purchased_at|date:"d.m.Y H:i" }}
+            <a href="{% url 'ticket_detail' ticket.id %}">
+                <strong>{{ ticket.event.title }}</strong> – {{ ticket.quantity }} шт., куплено {{ ticket.purchased_at|date:"d.m.Y H:i" }}
+            </a>
         </li>
     {% empty %}
         <li class="list-group-item">Вы ещё не купили ни одного билета.</li>
     {% endfor %}
 </ul>
 
-<script>
-    function toggleTickets() {
-        const list = document.getElementById('ticket-list');
-        const button = event.target;
-        if (list.style.display === "none") {
-            list.style.display = "block";
-            button.textContent = "Скрыть билеты";
-        } else {
-            list.style.display = "none";
-            button.textContent = "Показать билеты";
-        }
-    }
-</script>
+
 
 <br>
 <h3>Мои бронирования зала:</h3>
-<ul class="list-group">
+
+<button class="btn btn-link" onclick="toggleTickets()">Показать бронирования</button>
+<script>
+    function toggleTickets() {
+        const list = document.getElementById('book-list');
+        const button = event.target;
+        if (list.style.display === "none") {
+            list.style.display = "block";
+            button.textContent = "Скрыть бронирования";
+        } else {
+            list.style.display = "none";
+            button.textContent = "Показать бронирования";
+        }
+    }
+</script>
+<ul id="book-list" class="list-group" style="display: none;">
     {% for booking in hall_bookings %}
         <li class="list-group-item">{{ booking.event_name }} — {{ booking.date }} {{ booking.time }} ({{ booking.duration }} ч.)</li>
     {% empty %}

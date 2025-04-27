@@ -10,30 +10,5 @@
         {{ form.as_p }}
         <button type="submit" class="btn btn-primary">Забронировать</button>
     </form>
-
-    <hr>
-
-    <form method="get" class="form-inline mb-3">
-        <label for="date" class="form-label me-2">Фильтровать по дате:</label>
-        <input type="date" id="date" name="date" value="{{ selected_date }}" class="form-control me-2">
-        <button type="submit" class="btn btn-secondary">Показать</button>
-        {% if selected_date %}
-        <a href="{% url 'book_hall' %}" class="btn btn-outline-danger ms-2">Сбросить</a>
-        {% endif %}
-    </form>
-
-    <div class="alert alert-info">
-        <strong>Занятые слоты:</strong>
-        <ul>
-    {% for booking in bookings %}
-        <li>
-            {{ booking.date }}: с {{ booking.time|time:"H:i" }} до {{ booking.end_time|time:"H:i" }}
-            ({{ booking.event_name }})
-        </li>
-    {% empty %}
-        <li>Нет бронирований на выбранную дату.</li>
-    {% endfor %}
-</ul>
-    </div>
 </div>
 {% endblock %}

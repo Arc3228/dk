@@ -3,10 +3,10 @@
 <h1 class="text-center">Добро пожаловать в ДК "Нефтьче"</h1>
 <h2 class="text-center">Добро пожаловать в ДК "Нефтьче"</h2>
 <div class="row">
-    {% for news in latest_news %}
     <h2>Наши новости</h2>
+    {% for news in latest_news %}
     <div class="col-md-4">
-        <div class="card">
+        <div class="card home_card">
             <img src="{{ news.image.url }}" class="card-img-top">
             <div class="card-body">
                 <h5 class="card-title">{{ news.title }}</h5>
@@ -14,15 +14,15 @@
                 <a href="{% url 'news_detail' news.id %}" class="btn btn-primary">Читать далее</a>
             </div>
         </div>
-    </div>
     {% endfor %}
+    </div>
 
 </div>
 <div class="row">
 <div class="col-md-4">
     <h2>Предстоящие события</h2>
     {% for event in events %}
-    <div class="card">
+    <div class="card home_card">
         {% if event.image %}
             <img src="{{ event.image.url }}" class="card-img-top">
         {% endif %}

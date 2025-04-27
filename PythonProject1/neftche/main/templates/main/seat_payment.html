@@ -1,0 +1,18 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+<h2>Оплата места {{ seat.row }}-{{ seat.number }}</h2>
+<p>Мероприятие: {{ event.title }}</p>
+<p>Цена: {{ event.price }} руб.</p>
+<p>Ваш баланс: {{ request.user.balance }} руб.</p>
+
+
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">Оплатить {{ event.price }} руб.</button>
+</form>
+
+<p><a href="{% url 'events_detail' events_id=event.id %}" class="btn btn-secondary">Вернуться к мероприятию</a></p>
+
+{% endblock %}

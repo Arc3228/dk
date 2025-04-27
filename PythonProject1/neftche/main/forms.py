@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import News, CustomUser, Events, Ticket, HallBooking
@@ -70,32 +70,47 @@ class BalanceTopUpForm(forms.Form):
     amount = forms.DecimalField(max_digits=10, decimal_places=2, label="Сумма пополнения")
 
 
+
 class HallBookingForm(forms.ModelForm):
     class Meta:
         model = HallBooking
         fields = ['event_name', 'date', 'time', 'duration', 'check_oborydovanie']
-
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'min': date.today().strftime('%Y-%m-%d')}),
+            'time': forms.TimeInput(attrs={'type': 'time', 'min': '10:00', 'max': '19:00'}),
+        }
         labels = {
             'event_name': 'Название мероприятия',
             'date': 'Дата',
             'time': 'Время проведения',
-            'duration': 'Продолжительность',
+            'duration': 'Продолжительность (часы)',
             'check_oborydovanie': 'Нужно оборудование',
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['date'].widget.attrs['min'] = date.today().strftime('%Y-%m-%d')
+
+    def clean_date(self):
+        selected_date = self.cleaned_data.get('date')
+        if selected_date and selected_date < date.today():
+            raise forms.ValidationError("Нельзя выбрать дату в прошлом!")
+        return selected_date
 
     def clean(self):
         cleaned_data = super().clean()
-        date = cleaned_data.get('date')
-        time = cleaned_data.get('time')
+        date_val = cleaned_data.get('date')
+        time_val = cleaned_data.get('time')
         duration = cleaned_data.get('duration')
 
-        if date and time and duration:
-            start_new = datetime.combine(date, time)
+        if time_val and (time_val < datetime.strptime('10:00', '%H:%M').time() or time_val > datetime.strptime('19:00', '%H:%M').time()):
+            self.add_error('time', "Выберите время с 10:00 до 19:00.")
+
+        if date_val and time_val and duration:
+            start_new = datetime.combine(date_val, time_val)
             end_new = start_new + timedelta(hours=duration)
 
-            # Исключаем текущее бронирование из проверки
-            bookings = HallBooking.objects.filter(date=date)
+            bookings = HallBooking.objects.filter(date=date_val)
             if self.instance.pk:
                 bookings = bookings.exclude(pk=self.instance.pk)
 
@@ -106,8 +121,9 @@ class HallBookingForm(forms.ModelForm):
                 if start_new < end_existing and end_new > start_existing:
                     raise forms.ValidationError(
                         f"Зал уже забронирован на {booking.time.strftime('%H:%M')} "
-                        f"до {(end_existing).strftime('%H:%M')}"
+                        f"до {end_existing.time().strftime('%H:%M')}"
                     )
 
         return cleaned_data
+
 

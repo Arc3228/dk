@@ -5,10 +5,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from . import forms
 from .forms import NewsForm, SignUpForm, LoginForm, EventsForm, TicketPurchaseForm, BalanceTopUpForm, HallBookingForm
 from django.contrib import messages
-from .models import News, Events, Ticket, HallBooking
+from .models import News, Events, Ticket, HallBooking, Seat, create_seats_for_event
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-
+from qr_code.qrcode.utils import QRCodeOptions
 
 def home(request):
     latest_news = News.objects.order_by('-pub_date')[:3]
@@ -35,6 +35,41 @@ def events_detail(request, events_id):
     item = get_object_or_404(Events, id=events_id)
     return render(request, 'main/events_detail.html', {'events': item})
 
+
+@login_required(login_url='login')
+def seat_payment(request, seat_id):
+    seat = get_object_or_404(Seat, id=seat_id, is_taken=False)
+    event = seat.event
+
+    if request.method == 'POST':
+        user = request.user
+        if user.balance >= event.price:
+            # Списание средств
+            user.balance -= event.price
+            user.save()
+
+            # Бронирование места с сохранением пользователя
+            seat.is_taken = True
+            seat.user = user  # Это критически важная строка
+            seat.save()
+
+            # Создание билета
+            ticket = Ticket.objects.create(
+                event=event,
+                user=user,
+                quantity=1
+            )
+
+            messages.success(request, f'Место успешно оплачено! С вашего баланса списано {event.price} руб.')
+            return redirect('ticket_detail', ticket_id=ticket.id)
+        else:
+            messages.error(request, 'Недостаточно средств на балансе. Пожалуйста, пополните баланс.')
+
+    context = {
+        'seat': seat,
+        'event': event,
+    }
+    return render(request, 'main/seat_payment.html', context)
 
 def register(request):
     if request.method == 'POST':
@@ -111,11 +146,14 @@ def events_create(request):
             events = form.save(commit=False)
             events.author = request.user
             events.save()
+
+            # ✅ создаём места после сохранения события
+            create_seats_for_event(events)
+
             return redirect('home')
     else:
         form = EventsForm()
     return render(request, 'main/events_form.html', {'form': form})
-
 
 @login_required
 def events_edit(request, pk):
@@ -158,6 +196,22 @@ def buy_ticket(request, events_id):
     return render(request, 'main/buy_ticket.html', {'event': event})
 
 
+def ticket_detail(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id, user=request.user)
+
+    # Ищем место, связанное с этим билетом и пользователем
+    seat = Seat.objects.filter(event=ticket.event, user=request.user, is_taken=True).first()
+
+    qr_data = f"Билет ID: {ticket.id}\nМероприятие: {ticket.event.title}\nМесто: {seat.row if seat else 'Не указано'}-{seat.number if seat else ''}\nВладелец: {request.user.username}"
+
+    context = {
+        'ticket': ticket,
+        'seat': seat,
+        'qr_data': qr_data,
+    }
+    return render(request, 'main/ticket_detail.html', context)
+
+
 @login_required
 def profile(request):
     user = request.user
@@ -185,6 +239,7 @@ def top_up_balance(request):
     else:
         form = BalanceTopUpForm()
     return render(request, 'main/top_up_balance.html', {'form': form})
+
 
 def clean(self):
     cleaned_data = super().clean()
