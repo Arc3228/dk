@@ -20,6 +20,8 @@ urlpatterns = [
     path('bookings/slots/', views.get_booked_slots, name='get_booked_slots'),
     path('seat/payment/<int:seat_id>/', views.seat_payment, name='seat_payment'),
     path('tickets/<int:ticket_id>/', views.ticket_detail, name='ticket_detail'),
+    path('payment-history/', views.payment_history, name='payment_history'),
+
 
     # админ
     path('admin_panel', views.admin_panel, name='admin_panel'),

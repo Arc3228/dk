@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'qr_code',
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [

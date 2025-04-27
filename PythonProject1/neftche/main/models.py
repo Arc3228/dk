@@ -11,14 +11,6 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=18, blank=True, null=True)
 
 
-class Circle(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    image = models.ImageField(upload_to='circles/', blank=True, null=True)
-
-    def __str__(self):
-        return self.name
-
 class News(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
@@ -63,13 +55,15 @@ class HallBooking(models.Model):
     date = models.DateField()
     time = models.TimeField()
     duration = models.PositiveIntegerField(help_text="Продолжительность в часах")
-    created_at = models.DateTimeField(auto_now_add=True)
     check_oborydovanie = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    price = models.PositiveIntegerField(default=0, help_text="Стоимость бронирования в рублях")
 
     def __str__(self):
         return f"{self.event_name} ({self.date} {self.time}) от {self.user}"
 
-# внизу файла models.py
+
+
 def create_seats_for_event(event):
     total_seats = 987
     seats_per_row = 30
@@ -77,3 +71,13 @@ def create_seats_for_event(event):
         row = (i // seats_per_row) + 1
         number = (i % seats_per_row) + 1
         Seat.objects.create(event=event, row=row, number=number)
+
+
+class PaymentHistory(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    amount = models.PositiveIntegerField()
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.amount}₽ - {self.created_at.strftime('%d.%m.%Y %H:%M')}"

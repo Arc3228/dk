@@ -21,6 +21,7 @@
                 {% if user.is_authenticated %}
                 <a class="text-white me-3" href="{% url 'profile' %}">Профиль</a>
                 <a class="text-white me-3" href="{% url 'top_up_balance' %}">Пополнить баланс</a>
+                <a class="text-white me-3" href="{% url 'payment_history' %}">История платежей</a>
                 <a class="text-white me-3" href="{% url 'book_hall' %}">Бронирование зала</a>
                 <form action="{% url 'logout' %}" method="post">
                 {% csrf_token %}

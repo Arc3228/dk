@@ -1,0 +1,32 @@
+{% extends 'main/base.html' %}
+
+{% block title %}История платежей{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>История платежей</h2>
+
+    {% if payments %}
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Описание</th>
+                <th>Сумма списания</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payment in payments %}
+            <tr>
+                <td>{{ payment.created_at|date:"d.m.Y H:i" }}</td>
+                <td>{{ payment.description }}</td>
+                <td>{{ payment.amount }} ₽</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Платежей пока нет.</p>
+    {% endif %}
+</div>
+{% endblock %}

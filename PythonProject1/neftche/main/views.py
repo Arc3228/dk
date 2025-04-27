@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from . import forms
 from .forms import NewsForm, SignUpForm, LoginForm, EventsForm, TicketPurchaseForm, BalanceTopUpForm, HallBookingForm
 from django.contrib import messages
-from .models import News, Events, Ticket, HallBooking, Seat, create_seats_for_event
+from .models import News, Events, Ticket, HallBooking, Seat, create_seats_for_event, PaymentHistory
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from qr_code.qrcode.utils import QRCodeOptions
@@ -267,7 +267,7 @@ def clean(self):
 
 @login_required
 def book_hall(request):
-    form = HallBookingForm(request.POST or None)
+    form = HallBookingForm(request.POST or None, user=request.user)
     selected_date = request.GET.get('date')
 
     if selected_date:
@@ -279,16 +279,30 @@ def book_hall(request):
     else:
         bookings = HallBooking.objects.all().order_by('date', 'time')
 
-    # ➕ Добавляем расчет времени окончания
     for booking in bookings:
         start = datetime.combine(booking.date, booking.time)
         booking.end_time = (start + timedelta(hours=booking.duration)).time()
 
     if request.method == 'POST' and form.is_valid():
         booking = form.save(commit=False)
+        price = form.cleaned_data.get('calculated_price')
+
+        # Списание денег
+        request.user.balance -= price
+        request.user.save()
+
+        booking.price = price
         booking.user = request.user
         booking.save()
-        messages.success(request, "Зал успешно забронирован.")
+
+        # Создаем запись о платеже
+        PaymentHistory.objects.create(
+            user=request.user,
+            amount=price,
+            description=f"Бронирование зала: {booking.event_name} {booking.date} {booking.time.strftime('%H:%M')}"
+        )
+
+        messages.success(request, f"Зал успешно забронирован. С вашего баланса списано {price} ₽.")
         return redirect('book_hall')
 
     return render(request, 'main/book_hall.html', {
@@ -296,6 +310,7 @@ def book_hall(request):
         'bookings': bookings,
         'selected_date': selected_date,
     })
+
 
 
 
@@ -329,3 +344,8 @@ def delete_booking(request, booking_id):
         booking.delete()
         return redirect('hall_bookings')
     return render(request, 'main/delete_booking.html', {'booking': booking})
+
+@login_required
+def payment_history(request):
+    payments = PaymentHistory.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'main/payment_history.html', {'payments': payments})

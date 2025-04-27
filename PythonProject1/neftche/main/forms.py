@@ -72,6 +72,8 @@ class BalanceTopUpForm(forms.Form):
 
 
 class HallBookingForm(forms.ModelForm):
+    full_day = forms.BooleanField(required=False, label="Бронирование на весь день (10 часов)")
+
     class Meta:
         model = HallBooking
         fields = ['event_name', 'date', 'time', 'duration', 'check_oborydovanie']
@@ -88,24 +90,23 @@ class HallBookingForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)  # передаем юзера в форму
         super().__init__(*args, **kwargs)
         self.fields['date'].widget.attrs['min'] = date.today().strftime('%Y-%m-%d')
-
-    def clean_date(self):
-        selected_date = self.cleaned_data.get('date')
-        if selected_date and selected_date < date.today():
-            raise forms.ValidationError("Нельзя выбрать дату в прошлом!")
-        return selected_date
 
     def clean(self):
         cleaned_data = super().clean()
         date_val = cleaned_data.get('date')
         time_val = cleaned_data.get('time')
         duration = cleaned_data.get('duration')
+        full_day = cleaned_data.get('full_day')
+        check_oborydovanie = cleaned_data.get('check_oborydovanie')
 
+        # Валидация времени
         if time_val and (time_val < datetime.strptime('10:00', '%H:%M').time() or time_val > datetime.strptime('19:00', '%H:%M').time()):
             self.add_error('time', "Выберите время с 10:00 до 19:00.")
 
+        # Проверка пересечений с существующими бронированиями
         if date_val and time_val and duration:
             start_new = datetime.combine(date_val, time_val)
             end_new = start_new + timedelta(hours=duration)
@@ -124,6 +125,22 @@ class HallBookingForm(forms.ModelForm):
                         f"до {end_existing.time().strftime('%H:%M')}"
                     )
 
+        # Расчёт стоимости
+        price_per_hour = 25000
+
+        if full_day:
+            total_price = price_per_hour * 10
+            cleaned_data['duration'] = 10
+        else:
+            total_price = price_per_hour * duration
+
+        if check_oborydovanie:
+            total_price = int(total_price * 1.1)  # добавляем 10% за оборудование
+
+        cleaned_data['calculated_price'] = total_price
+
+        # Проверка баланса пользователя
+        if self.user and self.user.balance < total_price:
+            raise forms.ValidationError("Недостаточно средств на балансе для бронирования.")
+
         return cleaned_data
-
-
