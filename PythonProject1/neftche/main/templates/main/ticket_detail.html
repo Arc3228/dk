@@ -9,15 +9,15 @@
 
     <div class="card">
         <div class="card-header">
-            <h3>{{ ticket.user.surname }} {{ ticket.user.name }} {{ ticket.user.lastname }}</h3>
-            <h3>{{ ticket.event.title }}</h3>
+            <h3 class="text-white">{{ ticket.user.surname }} {{ ticket.user.name }} {{ ticket.user.lastname }}</h3>
+            <h3 class="text-white">{{ ticket.event.title }}</h3>
         </div>
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <p><strong>Дата покупки:</strong> {{ ticket.purchased_at|date:"d.m.Y H:i" }}</p>
-                    <p><strong>Количество:</strong> {{ ticket.quantity }} шт.</p>
-                    <p><strong>Стоимость:</strong> {{ ticket.event.price }} руб.</p>
+                    <p class="text-white"><strong>Дата покупки:</strong> {{ ticket.purchased_at|date:"d.m.Y H:i" }}</p>
+                    <p class="text-white"><strong>Количество:</strong> {{ ticket.quantity }} шт.</p>
+                    <p class="text-white"><strong>Стоимость:</strong> {{ ticket.event.price }} руб.</p>
 
                     {% if seat %}
                         <div class="alert alert-success">

@@ -4,18 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="69a2fa03-f5fd-4a77-a61c-77c8b0116b0c" name="Changes" comment="Билеты">
-      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/payment_history.html" afterDir="false" />
+    <list default="true" id="69a2fa03-f5fd-4a77-a61c-77c8b0116b0c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/site_statistics.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/book_hall.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/book_hall.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/admin/admin_panel.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/admin/admin_panel.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/hall_bookings.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/hall_bookings.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/ticket_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/ticket_detail.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/neftche/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/neftche/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +64,7 @@
       <recent name="C:\Users\rufad\PycharmProjects\dk\PythonProject1\neftche\main\templates\main" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\rufad\PycharmProjects\dk\PythonProject1\neftche\main\templates\main" />
       <recent name="C:\Users\rufad\PycharmProjects\dk\PythonProject1\neftche\main\templates\auth" />
     </key>
   </component>
@@ -166,7 +164,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745761835783</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Калькулятор и история платежей">
+      <option name="closed" value="true" />
+      <created>1745778503950</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1745778503950</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -177,6 +183,7 @@
     <MESSAGE value="Бронь зала" />
     <MESSAGE value="Стили" />
     <MESSAGE value="Билеты" />
-    <option name="LAST_COMMIT_MESSAGE" value="Билеты" />
+    <MESSAGE value="Калькулятор и история платежей" />
+    <option name="LAST_COMMIT_MESSAGE" value="Калькулятор и история платежей" />
   </component>
 </project>

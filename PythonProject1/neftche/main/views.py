@@ -3,11 +3,13 @@ from django.contrib.auth import login, authenticate
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from . import forms
+from django.db.models import Sum, Count
 from .forms import NewsForm, SignUpForm, LoginForm, EventsForm, TicketPurchaseForm, BalanceTopUpForm, HallBookingForm
 from django.contrib import messages
 from .models import News, Events, Ticket, HallBooking, Seat, create_seats_for_event, PaymentHistory
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth import get_user_model
 from qr_code.qrcode.utils import QRCodeOptions
 
 def home(request):
@@ -349,3 +351,23 @@ def delete_booking(request, booking_id):
 def payment_history(request):
     payments = PaymentHistory.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'main/payment_history.html', {'payments': payments})
+
+
+@staff_member_required
+def site_statistics(request):
+    User = get_user_model()
+
+    total_users = User.objects.count()
+    total_news = News.objects.count()
+    total_bookings = HallBooking.objects.count()
+    total_revenue = HallBooking.objects.aggregate(total=Sum('price'))['total'] or 0
+
+    popular_booking_date = HallBooking.objects.values('date').annotate(count=Count('id')).order_by('-count').first()
+
+    return render(request, 'main/site_statistics.html', {
+        'total_users': total_users,
+        'total_news': total_news,
+        'total_bookings': total_bookings,
+        'total_revenue': total_revenue,
+        'popular_booking_date': popular_booking_date,
+    })

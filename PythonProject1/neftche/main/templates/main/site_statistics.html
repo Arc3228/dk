@@ -1,0 +1,23 @@
+{% extends 'main/base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Общая статистика сайта</h2>
+
+    <div class="card mt-4 p-4">
+        <p class="text-white"><strong>Пользователей:</strong> {{ total_users }}</p>
+        <p class="text-white"><strong>Новостей / событий:</strong> {{ total_news }}</p>
+        <p class="text-white"><strong>Бронирований залов:</strong> {{ total_bookings }}</p>
+        <p class="text-white"><strong>Общая выручка от бронирований:</strong> {{ total_revenue|intcomma }} ₽</p>
+
+        {% if popular_booking_date %}
+            <p class="text-white"><strong>Самая популярная дата для бронирования:</strong> {{ popular_booking_date.date }} ({{ popular_booking_date.count }} бронирований)</p>
+        {% else %}
+            <p class="text-white">Бронирований ещё нет.</p>
+        {% endif %}
+    </div>
+
+    <a href="{% url 'admin_panel' %}" class="btn btn-primary mt-3">Назад</a>
+</div>
+{% endblock %}
