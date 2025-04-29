@@ -52,6 +52,7 @@
     {% if forloop.counter|divisibleby:30 %}<br>{% endif %}
   {% endfor %}
 </div>
+<a href="{% url 'home' %}" class="btn btn-primary mt-3">Назад</a>
 
 
 {% if user.is_superuser %}

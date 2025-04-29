@@ -12,7 +12,7 @@
         <p class="text-white"><strong>Общая выручка от бронирований:</strong> {{ total_revenue|intcomma }} ₽</p>
 
         {% if popular_booking_date %}
-            <p class="text-white"><strong>Самая популярная дата для бронирования:</strong> {{ popular_booking_date.date }} ({{ popular_booking_date.count }} бронирований)</p>
+
         {% else %}
             <p class="text-white">Бронирований ещё нет.</p>
         {% endif %}
