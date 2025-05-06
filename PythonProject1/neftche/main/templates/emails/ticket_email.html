@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Билет</title>
+</head>
+<body>
+    <h2>Ваш билет</h2>
+    <p><strong>Мероприятие:</strong> {{ ticket.event.title }}</p>
+    <p><strong>Количество:</strong> {{ ticket.quantity }}</p>
+    <p><strong>Дата покупки:</strong> {{ ticket.purchased_at|date:"d.m.Y H:i" }}</p>
+
+    <h3>Места:</h3>
+    <ul>
+        {% for seat in ticket.seats.all %}
+            <li>Ряд {{ seat.row }}, Место {{ seat.number }}</li>
+        {% endfor %}
+    </ul>
+
+    <p><strong>QR-код:</strong></p>
+    <p>Отсканируйте QR-код для проверки билета.</p>
+    <p><img src="cid:qrcode.png" alt="QR-код"></p>
+</body>
+</html>

@@ -5,11 +5,11 @@ from .models import News, CustomUser, Events, Ticket, HallBooking
 
 
 class SignUpForm(UserCreationForm):
-    name = forms.CharField(max_length=50)
-    surname = forms.CharField(max_length=100)
-    lastname = forms.CharField(max_length=100)
-    phone_number = forms.CharField(max_length=18, required=True, help_text='Обязательное поле.')
-    email = forms.EmailField(max_length=254, help_text='Обязательное поле. Введите действующий email.')
+    name = forms.CharField(max_length=50, label='Имя')
+    surname = forms.CharField(max_length=100, label='Фамилия')
+    lastname = forms.CharField(max_length=100, label='Отчество')
+    phone_number = forms.CharField(max_length=18, required=True, label='Номер телефона')
+    email = forms.EmailField(max_length=254, label='Почта')
 
     class Meta:
         model = CustomUser
@@ -41,7 +41,7 @@ class NewsForm(forms.ModelForm):
 class EventsForm(forms.ModelForm):
     class Meta:
         model = Events
-        fields = ['title', 'content', 'image', 'price']
+        fields = ['title', 'content', 'image', 'price', 'data']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -57,6 +57,10 @@ class EventsForm(forms.ModelForm):
             'price': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Введите цену билета'
+            }),
+            'data': forms.DateTimeInput(attrs={
+                'class': 'form-control',
+                'type': 'datetime-local'  # ← Это ключевое!
             }),
         }
 
@@ -80,6 +84,7 @@ class HallBookingForm(forms.ModelForm):
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date', 'min': date.today().strftime('%Y-%m-%d')}),
             'time': forms.TimeInput(attrs={'type': 'time', 'min': '10:00', 'max': '19:00'}),
+            'check_oborydovanie': forms.CheckboxInput(attrs={'id': 'id_check_oborydovanie'}),  # Добавьте ID
         }
         labels = {
             'event_name': 'Название мероприятия',
@@ -90,7 +95,7 @@ class HallBookingForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)  # передаем юзера в форму
+        self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         self.fields['date'].widget.attrs['min'] = date.today().strftime('%Y-%m-%d')
 
@@ -135,7 +140,7 @@ class HallBookingForm(forms.ModelForm):
             total_price = price_per_hour * duration
 
         if check_oborydovanie:
-            total_price = int(total_price * 1.1)  # добавляем 10% за оборудование
+            total_price = int(total_price * 1.1)  # Добавляем 10% за оборудование
 
         cleaned_data['calculated_price'] = total_price
 

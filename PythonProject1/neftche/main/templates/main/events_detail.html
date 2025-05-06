@@ -3,10 +3,10 @@
 {% block content %}
 
 <h1>{{ events.title }}</h1>
-<p class="text-muted">{{ events.pub_date|date:"d.m.Y H:i" }}</p>
 {% if events.image %}<img src="{{ events.image.url }}" class="img-fluid mb-3">{% endif %}
 <div>{{ events.content|linebreaks }}</div>
 <p><strong>Цена билета:</strong> {{ events.price }} ₽</p>
+<p>{{ events.data|date:"d.m.Y H:i" }}</p>
 
 <hr>
 <h4>Выберите место:</h4>

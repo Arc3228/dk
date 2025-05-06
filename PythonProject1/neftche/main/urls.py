@@ -1,5 +1,4 @@
 from tkinter.font import names
-
 from django.contrib.auth.views import LogoutView
 from django.urls import path, include
 from . import views
@@ -21,7 +20,12 @@ urlpatterns = [
     path('seat/payment/<int:seat_id>/', views.seat_payment, name='seat_payment'),
     path('tickets/<int:ticket_id>/', views.ticket_detail, name='ticket_detail'),
     path('payment-history/', views.payment_history, name='payment_history'),
-
+    path('cart/add/<int:event_id>/<int:seat_id>/', views.add_to_cart, name='add_to_cart'),
+    path('cart/', views.view_cart, name='view_cart'),
+    path('cart/remove/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
+    path('cart/pay/', views.process_payment, name='process_payment'),
+    path('cart/pay/<int:item_id>/', views.process_single_payment, name='process_single_payment'),
+    path('ticket/<int:ticket_id>/download/', views.download_ticket, name='download_ticket'),
 
     # админ
     path('admin_panel', views.admin_panel, name='admin_panel'),

@@ -1,0 +1,90 @@
+{% extends 'main/base.html' %}
+{% load custom_filters %}
+{% block title %}Корзина{% endblock %}
+{% block content %}
+<h2>Корзина</h2>
+<p>Баланс: {{ user.balance }} ₽</p>
+{% if cart_items %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Мероприятие</th>
+      <th>Цена</th>
+      <th>Ряд</th>
+      <th>Место</th>
+      <th>Сумма</th>
+      <th>Время на оплату</th>
+      <th>Действие</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in cart_items %}
+    <tr>
+      <td>{{ item.event.title }}</td>
+      <td>{{ item.event.price }} ₽</td>
+      <td>{{ item.seat.row }}</td>
+      <td>{{ item.seat.number }}</td>
+      <td>{{ item.event.price|mul:item.quantity }} ₽</td>
+      <td>
+        <div class="cart-item-timer" data-added-at="{{ item.added_at|date:'c' }}">
+          <span class="timer-text">15:00</span>
+        </div>
+      </td>
+      <td>
+        <form method="post" action="{% url 'process_single_payment' item.id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-success btn-sm">Оплатить</button>
+          <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-danger btn-sm">Удалить</a>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<hr>
+<h4>Итого: {{ total_price }} ₽</h4>
+<a href="{% url 'process_payment' %}" class="btn btn-primary">Оплатить всё</a>
+{% else %}
+<p>Корзина пуста.</p>
+{% endif %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const timers = document.querySelectorAll(".cart-item-timer");
+
+    timers.forEach(timerDiv => {
+      const addedAtStr = timerDiv.getAttribute("data-added-at");
+      const addedAt = new Date(addedAtStr);
+
+      if (isNaN(addedAt.getTime())) {
+        console.error("Неверный формат даты:", addedAtStr);
+        return;
+      }
+
+      const timerText = timerDiv.querySelector(".timer-text");
+
+      // Вычисляем, сколько времени осталось до истечения 15 минут
+      const expirationTime = new Date(addedAt.getTime() + 15 * 60000); // 15 минут
+      let timeLeft = Math.max(0, Math.floor((expirationTime - new Date()) / 1000));
+
+      function updateTimer() {
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          timerText.textContent = "Время истекло";
+          // Можно удалить элемент или обновить страницу
+          setTimeout(() => location.reload(), 1000);
+          return;
+        }
+
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerText.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        timeLeft--;
+      }
+
+      updateTimer(); // первый запуск
+      const interval = setInterval(updateTimer, 1000);
+    });
+  });
+</script>
+{% endblock %}

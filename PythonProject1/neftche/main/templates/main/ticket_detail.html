@@ -1,46 +1,38 @@
 {% extends 'main/base.html' %}
 {% load qr_code %}
-
 {% block title %}Детали билета{% endblock %}
-
 {% block content %}
-<div class="container mt-4">
+<div>
     <h2>Детали билета</h2>
-
     <div class="card">
         <div class="card-header">
-            <h3 class="text-white">{{ ticket.user.surname }} {{ ticket.user.name }} {{ ticket.user.lastname }}</h3>
-            <h3 class="text-white">{{ ticket.event.title }}</h3>
+            <h3 class="">{{ ticket.user.surname }} {{ ticket.user.name }} {{ ticket.user.lastname }}</h3>
+            <h3 class="">{{ ticket.event.title }}</h3>
         </div>
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <p class="text-white"><strong>Дата покупки:</strong> {{ ticket.purchased_at|date:"d.m.Y H:i" }}</p>
-                    <p class="text-white"><strong>Количество:</strong> {{ ticket.quantity }} шт.</p>
-                    <p class="text-white"><strong>Стоимость:</strong> {{ ticket.event.price }} руб.</p>
+                    <p><strong>Мероприятие:</strong> {{ ticket.event.title }}</p>
+                    <p><strong>Количество:</strong> {{ ticket.quantity }}</p>
+                    <p><strong>Дата покупки:</strong> {{ ticket.purchased_at|date:"d.m.Y H:i" }}</p>
+                    <p><strong>Дата проведения мероприятия:</strong> {{ ticket.event.data|date:"d.m.Y H:i" }}</p>
 
-                    {% if seat %}
-                        <div class="alert alert-success">
-                            <h5>Ваше место:</h5>
-                            <p class="mb-0">Ряд: <strong>{{ seat.row }}</strong></p>
-                            <p class="mb-0">Место: <strong>{{ seat.number }}</strong></p>
-                        </div>
-                    {% else %}
-                        <div class="alert alert-warning">
-                            Место не указано. Обратитесь в поддержку.
-                        </div>
-                    {% endif %}
+                    {% for seat in seats %}
+                        <p>Ряд {{ seat.row }}, Место {{ seat.number }}</p>
+                    {% empty %}
+                        <p>Места не указаны</p>
+                    {% endfor %}
                 </div>
                 <div class="col-md-6 text-center">
                     <div class="qr-code-container">
                         {% qr_from_text qr_data size="M" %}
-                        <p class="mt-2">ID билета: {{ ticket.id }}</p>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="card-footer text-muted">
-            <a href="{% url 'profile' %}" class="btn btn-secondary">Вернуться в профиль</a>
+        <div class="card-footer text-muted d-flex justify-content-between">
+            <a href="{% url 'profile' %}" class="btn btn-primary ">Вернуться в профиль</a>
+            <a href="{% url 'download_ticket' ticket.id %}" class="btn btn-secondary">Скачать билет</a>
         </div>
     </div>
 </div>

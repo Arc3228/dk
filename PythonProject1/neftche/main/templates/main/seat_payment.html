@@ -8,9 +8,9 @@
 
 
 
-<form method="post">
+<form method="post" action="{% url 'add_to_cart' event.id seat.id %}">
     {% csrf_token %}
-    <button type="submit" class="btn btn-primary">Оплатить {{ event.price }} руб.</button>
+    <button type="submit" class="btn btn-success">Добавить в корзину</button>
 </form>
 
 <p><a href="{% url 'events_detail' events_id=event.id %}" class="btn btn-secondary">Вернуться к мероприятию</a></p>

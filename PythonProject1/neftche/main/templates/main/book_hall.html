@@ -5,6 +5,7 @@
 {% block content %}
 <div class="container mt-4">
     <h2>Забронировать зал</h2>
+    <p>1 час - 25000 ₽</p>
     <form method="post" id="booking-form">
         {% csrf_token %}
         {{ form.as_p }}
@@ -19,12 +20,14 @@
 document.addEventListener('DOMContentLoaded', function() {
     const durationInput = document.getElementById('id_duration');
     const fullDayCheckbox = document.getElementById('id_full_day');
+    const equipmentCheckbox = document.getElementById('id_check_oborydovanie');
     const priceInfo = document.getElementById('price-info');
 
     function updatePrice() {
         let pricePerHour = 25000;
         let totalPrice = 0;
 
+        // Основная стоимость
         if (fullDayCheckbox.checked) {
             totalPrice = pricePerHour * 10;
         } else {
@@ -34,17 +37,27 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
+        // Добавляем 10% за оборудование
+        if (equipmentCheckbox && equipmentCheckbox.checked) {
+            totalPrice = Math.round(totalPrice * 1.1);
+        }
+
+        // Обновляем отображение
         priceInfo.textContent = 'Цена бронирования: ' + totalPrice.toLocaleString('ru-RU') + ' ₽';
     }
 
+    // Слушатели событий
     if (durationInput) {
         durationInput.addEventListener('input', updatePrice);
     }
     if (fullDayCheckbox) {
         fullDayCheckbox.addEventListener('change', updatePrice);
     }
+    if (equipmentCheckbox) {
+        equipmentCheckbox.addEventListener('change', updatePrice);
+    }
 
-    updatePrice(); // Обновляем сразу при загрузке
+    updatePrice(); // Инициализация при загрузке
 });
 </script>
 {% endblock %}
