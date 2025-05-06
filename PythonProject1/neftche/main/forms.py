@@ -5,11 +5,11 @@ from .models import News, CustomUser, Events, Ticket, HallBooking
 
 
 class SignUpForm(UserCreationForm):
-    name = forms.CharField(max_length=50)
-    surname = forms.CharField(max_length=100)
-    lastname = forms.CharField(max_length=100)
-    phone_number = forms.CharField(max_length=18, required=True, help_text='Обязательное поле.')
-    email = forms.EmailField(max_length=254, help_text='Обязательное поле. Введите действующий email.')
+    name = forms.CharField(max_length=50, label='Имя')
+    surname = forms.CharField(max_length=100, label='Фамилия')
+    lastname = forms.CharField(max_length=100, label='Отчество')
+    phone_number = forms.CharField(max_length=18, required=True, label='Номер телефона')
+    email = forms.EmailField(max_length=254, label='Почта')
 
     class Meta:
         model = CustomUser
@@ -41,7 +41,7 @@ class NewsForm(forms.ModelForm):
 class EventsForm(forms.ModelForm):
     class Meta:
         model = Events
-        fields = ['title', 'content', 'image', 'price']
+        fields = ['title', 'content', 'image', 'price', 'data']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -57,6 +57,10 @@ class EventsForm(forms.ModelForm):
             'price': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Введите цену билета'
+            }),
+            'data': forms.DateTimeInput(attrs={
+                'class': 'form-control',
+                'type': 'datetime-local'  # ← Это ключевое!
             }),
         }
 

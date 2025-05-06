@@ -1,23 +1,111 @@
-{% extends 'main/base.html' %}
-{% load humanize %}
-
+{% extends "base.html" %}
+{% block title %}Статистика сайта{% endblock %}
 {% block content %}
-<div class="container mt-4">
-    <h2>Общая статистика сайта</h2>
+<h2>📊 Статистика сайта</h2>
 
-    <div class="card mt-4 p-4">
-        <p class="text-white"><strong>Пользователей:</strong> {{ total_users }}</p>
-        <p class="text-white"><strong>Новостей / событий:</strong> {{ total_news }}</p>
-        <p class="text-white"><strong>Бронирований залов:</strong> {{ total_bookings }}</p>
-        <p class="text-white"><strong>Общая выручка от бронирований:</strong> {{ total_revenue|intcomma }} ₽</p>
+<!-- Форма фильтрации -->
+<form method="get">
+    <label>Начальная дата:</label>
+    <input type="date" name="start_date" value="{{ start_date }}">
 
-        {% if popular_booking_date %}
+    <label>Конечная дата:</label>
+    <input type="date" name="end_date" value="{{ end_date }}">
 
-        {% else %}
-            <p class="text-white">Бронирований ещё нет.</p>
-        {% endif %}
+    <button type="submit">Фильтровать</button>
+</form>
+
+<hr>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h4>Пользователи</h4>
+        <p>{{ total_users }}</p>
     </div>
-
-    <a href="{% url 'admin_panel' %}" class="btn btn-primary mt-3">Назад</a>
+    <div class="stat-card">
+        <h4>Новости</h4>
+        <p>{{ total_news }}</p>
+    </div>
+    <div class="stat-card">
+        <h4>Бронирования</h4>
+        <p>{{ total_bookings }}</p>
+    </div>
+    <div class="stat-card">
+        <h4>Общая выручка</h4>
+        <p>{{ total_revenue }} ₽</p>
+    </div>
+    {% if popular_booking_date %}
+    <div class="stat-card">
+        <h4>Самый популярный день</h4>
+        <p>{{ popular_booking_date.date }} ({{ popular_booking_date.count }})</p>
+    </div>
+    {% endif %}
 </div>
+
+<!-- Диаграмма -->
+<canvas id="revenueChart" width="800" height="300"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+
+    const labels = [
+        {% for item in revenue_data %}
+            "{{ item.day }}",
+        {% endfor %}
+    ];
+
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'Выручка за день',
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            data: [
+                {% for item in revenue_data %}
+                    {{ item.total|default:0 }},
+                {% endfor %}
+            ],
+            fill: true,
+        }]
+    };
+
+    new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            },
+            plugins: {
+                legend: { display: true },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y + ' ₽';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<style>
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.stat-card {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+</style>
+
 {% endblock %}

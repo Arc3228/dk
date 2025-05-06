@@ -1,32 +1,158 @@
 {% extends 'main/base.html' %}
-
-{% block title %}История платежей{% endblock %}
-
+{% block title %}История платежей и билетов{% endblock %}
 {% block content %}
-<div class="container mt-4">
-    <h2>История платежей</h2>
 
+<style>
+
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  /* Стили для вкладок */
+  .tabs {
+    display: flex;
+    border-bottom: 2px solid #ccc;
+    margin-bottom: 20px;
+  }
+
+  .tab-button {
+    padding: 10px 20px;
+    cursor: pointer;
+    background: none;
+    font-size: 16px;
+    font-weight: bold;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+    color: black;
+  }
+
+  .tab-button.active {
+    color: #007bff;
+    border-bottom-color: #007bff;
+  }
+
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  /* Таблицы */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f5f5f5;
+  }
+
+  tr:nth-child(even) {
+    background-color: #fafafa;
+  }
+
+  p {
+    margin-top: 10px;
+    color: #666;
+  }
+</style>
+
+<div class="container">
+  <h2>История</h2>
+
+  <!-- Вкладки -->
+  <div class="tabs">
+    <button class="tab-button active" onclick="openTab(event, 'payments')">Платежи</button>
+    <button class="tab-button" onclick="openTab(event, 'tickets')">Билеты</button>
+  </div>
+
+  <!-- Контент вкладок -->
+  <div id="payments" class="tab-content active">
     {% if payments %}
-    <table class="table table-bordered mt-3">
-        <thead>
-            <tr>
-                <th>Дата</th>
-                <th>Описание</th>
-                <th>Сумма списания</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for payment in payments %}
-            <tr>
-                <td>{{ payment.created_at|date:"d.m.Y H:i" }}</td>
-                <td>{{ payment.description }}</td>
-                <td>{{ payment.amount }} ₽</td>
-            </tr>
-            {% endfor %}
-        </tbody>
+    <table>
+      <thead>
+        <tr>
+          <th>Дата</th>
+          <th>Описание</th>
+          <th>Сумма списания</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for payment in payments %}
+        <tr>
+          <td>{{ payment.created_at|date:"d.m.Y H:i" }}</td>
+          <td>{{ payment.description }}</td>
+          <td>{{ payment.amount }} ₽</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">Платежей пока нет.</td></tr>
+        {% endfor %}
+      </tbody>
     </table>
     {% else %}
     <p>Платежей пока нет.</p>
     {% endif %}
+  </div>
+
+  <div id="tickets" class="tab-content">
+    {% if tickets %}
+    <table>
+      <thead>
+        <tr>
+          <th>Мероприятие</th>
+          <th>Дата покупки</th>
+          <th>Количество</th>
+          <th>Сумма</th>
+          <th>Места</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ticket in tickets %}
+        {% widthratio ticket.event.price 1 ticket.quantity as total %}
+        <tr>
+          <td>{{ ticket.event.title }}</td>
+          <td>{{ ticket.purchased_at|date:"d.m.Y H:i" }}</td>
+          <td>{{ ticket.quantity }}</td>
+          <td>{{ total }} ₽</td>
+          <td>
+            {% for seat in ticket.seats.all %}
+              Ряд {{ seat.row }} Место {{ seat.number }}<br>
+            {% endfor %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">Билетов пока нет.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p>Билетов пока нет.</p>
+    {% endif %}
+  </div>
 </div>
+
+<script>
+  function openTab(evt, tabName) {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    // Скрываем все вкладки
+    tabContents.forEach(tab => tab.classList.remove('active'));
+    tabButtons.forEach(button => button.classList.remove('active'));
+
+    // Показываем нужную
+    document.getElementById(tabName).classList.add('active');
+    evt.currentTarget.classList.add('active');
+  }
+</script>
+
 {% endblock %}

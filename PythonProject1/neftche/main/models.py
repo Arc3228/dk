@@ -25,6 +25,7 @@ class Events(models.Model):
     price = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     pub_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=1)
+    data = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -34,6 +35,7 @@ class Ticket(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='tickets')
     purchased_at = models.DateTimeField(auto_now_add=True)
     quantity = models.PositiveIntegerField(default=1)
+    seats = models.ManyToManyField('Seat')  # ← Новое поле
 
     def __str__(self):
         return f"{self.user} — {self.event.title} ({self.quantity})"
@@ -81,3 +83,14 @@ class PaymentHistory(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.amount}₽ - {self.created_at.strftime('%d.%m.%Y %H:%M')}"
+
+
+class CartItem(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    event = models.ForeignKey(Events, on_delete=models.CASCADE)
+    seat = models.ForeignKey(Seat, on_delete=models.CASCADE)  # Теперь обязательное поле
+    quantity = models.PositiveIntegerField(default=1)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} — {self.event.title} (Ряд {self.seat.row}, Место {self.seat.number})"

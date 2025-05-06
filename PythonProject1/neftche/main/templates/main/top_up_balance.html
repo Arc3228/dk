@@ -1,10 +1,224 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
+<style>
+  label {
+  font-weight: 600;
+}
+
+input {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  margin-top: 10px;
+  padding: 16px 24px;
+  width: 90%;
+  height: 15%;
+  left: 1048px;
+  top: 16px;
+  background: #FFFFFF;
+  border: 2px solid #1B1B1B;
+  box-sizing: border-box;
+  border-radius: 16px;
+  transition: 0.2s;
+}
+
+.exp-cvc {
+  justify-self: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+}
+
+.expiration {
+  font-size: 0.75rem;
+  width: 50%;
+  margin-right: 20px;
+}
+
+.security {
+  font-size: 0.75rem;
+  width: 50%;
+  margin-left: 20px;
+}
+
+span {
+  padding-left: 5px;
+  cursor: pointer;
+}
+
+ .form-group {
+  margin-bottom: 1rem;
+}
+
+input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+
+
+.error-message {
+  color: #dc3545;
+  font-size: 0.875em;
+  display: none;
+}
+</style>
+
+
+
   <h2>Пополнить баланс</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Пополнить</button>
-  </form>
+  <form id="payment-form" method="post">
+  {% csrf_token %}
+
+  <div class="form-group">
+    <label for="name">Имя</label>
+    <input type="text" id="name" name="name" placeholder="Name" required/>
+    <small class="error-message" id="name-error"></small>
+  </div>
+
+  <div class="form-group">
+    <label for="card">Номер карты</label>
+    <input type="text" id="card" name="card" placeholder="0000 0000 0000 0000" required minlength="19" maxlength="19"/>
+    <small class="error-message" id="card-error"></small>
+  </div>
+
+  <div class="exp-cvc">
+    <div class="expiration form-group">
+      <label for="expiry">Срок действия</label>
+      <input type="text" id="expiry" name="expiry" placeholder="MM/YY" required maxlength="5"/>
+      <small class="error-message" id="expiry-error"></small>
+    </div>
+
+    <div class="security form-group">
+      <label for="cvc">CVC</label>
+      <input type="text" id="cvc" name="cvc" placeholder="XXX" required maxlength="3"/>
+      <small class="error-message" id="cvc-error"></small>
+    </div>
+  </div>
+
+  {{ form.as_p }}
+
+  <button type="submit" class="btn btn-primary">Пополнить</button>
+</form>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const cardInput = document.getElementById("card");
+    const expiryInput = document.getElementById("expiry");
+    const cvcInput = document.getElementById("cvc");
+    const nameInput = document.getElementById("name");
+
+    const form = document.getElementById("payment-form");
+
+    // Маска для номера карты: 0000 0000 0000 0000
+    cardInput.addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\D/g, "");
+      if (value.length > 16) value = value.slice(0, 16);
+      e.target.value = value.replace(/(\d{4})/g, "$1 ").trim();
+    });
+
+    // Маска для даты: MM/YY
+    expiryInput.addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\D/g, "");
+      if (value.length > 4) value = value.slice(0, 4);
+      if (value.length > 2) {
+        value = value.slice(0, 2) + "/" + value.slice(2);
+      }
+      e.target.value = value;
+    });
+
+    // Маска для CVC: только цифры
+    cvcInput.addEventListener("input", function (e) {
+      e.target.value = e.target.value.replace(/\D/g, "");
+    });
+
+    // Валидация формы
+form.addEventListener("submit", function (e) {
+  let isValid = true;
+
+  // Имя
+  const nameValue = nameInput.value.trim();
+  const nameRegex = /^[A-Za-z ]+$/; // Только буквы и пробелы
+
+  if (!nameValue) {
+    showError("name-error", "Введите имя");
+    isValid = false;
+  } else if (!nameRegex.test(nameValue)) {
+    showError("name-error", "Только английские буквы и пробелы");
+    isValid = false;
+  } else {
+    hideError("name-error");
+  }
+
+  // Номер карты
+  const cardValue = cardInput.value.replace(/\s/g, "");
+  if (!/^\d{16}$/.test(cardValue)) {
+    showError("card-error", "Введите 16 цифр");
+    isValid = false;
+  } else {
+    hideError("card-error");
+  }
+
+  // Срок действия
+  const expiryValue = expiryInput.value;
+  const expiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+
+  if (!expiryRegex.test(expiryValue)) {
+    showError("expiry-error", "Формат MM/YY");
+    isValid = false;
+  } else {
+    // Проверка на прошедшую дату
+    const [inputMonth, inputYear] = expiryValue.split("/").map(Number);
+    const currentYear = new Date().getFullYear() % 100; // Получаем последние 2 цифры года (25 для 2025)
+    const currentMonth = new Date().getMonth() + 1; // Месяц начинается с 0
+
+    // Преобразуем в 4-значный год
+    const fullInputYear = inputYear + 2000;
+
+    // Получаем текущий год в формате YYYY
+    const currentFullYear = new Date().getFullYear();
+
+    // Проверяем год
+    if (fullInputYear < currentFullYear) {
+      showError("expiry-error", "Срок действия истёк");
+      isValid = false;
+    } else if (fullInputYear === currentFullYear && inputMonth < currentMonth) {
+      showError("expiry-error", "Срок действия истёк");
+      isValid = false;
+    } else {
+      hideError("expiry-error");
+    }
+  }
+
+  // CVC
+  const cvcValue = cvcInput.value;
+  if (!/^\d{3,4}$/.test(cvcValue)) {
+    showError("cvc-error", "3 или 4 цифры");
+    isValid = false;
+  } else {
+    hideError("cvc-error");
+  }
+
+  if (!isValid) {
+    e.preventDefault();
+    alert("Пожалуйста, исправьте ошибки в форме.");
+  }
+});
+
+    function showError(id, message) {
+      const el = document.getElementById(id);
+      el.textContent = message;
+      el.style.display = "block";
+    }
+
+    function hideError(id) {
+      const el = document.getElementById(id);
+      el.textContent = "";
+      el.style.display = "none";
+    }
+  });
+</script>
 {% endblock %}

@@ -1,12 +1,15 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+from django.utils import timezone
 from django.contrib.auth import login, authenticate
+from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils.dateparse import parse_date
 from . import forms
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, F
 from .forms import NewsForm, SignUpForm, LoginForm, EventsForm, TicketPurchaseForm, BalanceTopUpForm, HallBookingForm
 from django.contrib import messages
-from .models import News, Events, Ticket, HallBooking, Seat, create_seats_for_event, PaymentHistory
+from .models import News, Events, Ticket, HallBooking, Seat, create_seats_for_event, PaymentHistory, CartItem
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
@@ -201,14 +204,21 @@ def buy_ticket(request, events_id):
 def ticket_detail(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id, user=request.user)
 
-    # Ищем место, связанное с этим билетом и пользователем
-    seat = Seat.objects.filter(event=ticket.event, user=request.user, is_taken=True).first()
+    # Получаем все места, связанные с билетом
+    seats = ticket.seats.all()
 
-    qr_data = f"Билет ID: {ticket.id}\nМероприятие: {ticket.event.title}\nМесто: {seat.row if seat else 'Не указано'}-{seat.number if seat else ''}\nВладелец: {request.user.username}"
+    # Генерируем QR-код с информацией обо всех местах
+    qr_data = f"Билет ID: {ticket.id}\nМероприятие: {ticket.event.title}\nВладелец: {request.user.username}\n"
+
+    if seats.exists():
+        for seat in seats:
+            qr_data += f"Место: {seat.row}-{seat.number}\n"
+    else:
+        qr_data += "Места: Не указаны\n"
 
     context = {
         'ticket': ticket,
-        'seat': seat,
+        'seats': seats,
         'qr_data': qr_data,
     }
     return render(request, 'main/ticket_detail.html', context)
@@ -217,7 +227,7 @@ def ticket_detail(request, ticket_id):
 @login_required
 def profile(request):
     user = request.user
-    tickets = user.tickets.all()
+    tickets = user.tickets.filter(user=user)
     hall_bookings = HallBooking.objects.filter(user=user)
 
     return render(request, 'main/profile.html', {
@@ -349,25 +359,223 @@ def delete_booking(request, booking_id):
 
 @login_required
 def payment_history(request):
+    # Получаем платежи и билеты пользователя
     payments = PaymentHistory.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'main/payment_history.html', {'payments': payments})
+    tickets = Ticket.objects.filter(user=request.user).order_by('-purchased_at')
+
+    # Передаем в шаблон
+    return render(request, 'main/payment_history.html', {
+        'payments': payments,
+        'tickets': tickets
+    })
 
 
 @staff_member_required
 def site_statistics(request):
     User = get_user_model()
 
+    # Получаем параметры фильтрации
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    # Парсим даты
+    start = None
+    end = None
+    if start_date and end_date:
+        try:
+            start = parse_date(start_date)
+            end = parse_date(end_date)
+        except:
+            pass
+
+    news_queryset = News.objects.all()
+    booking_queryset = HallBooking.objects.all()
+    ticket_queryset = Ticket.objects.select_related('event')
+
+    if start and end:
+        news_queryset = news_queryset.filter(pub_date__date__range=[start, end])
+        booking_queryset = booking_queryset.filter(date__range=[start, end])
+        ticket_queryset = ticket_queryset.filter(purchased_at__date__range=[start, end])
+
     total_users = User.objects.count()
-    total_news = News.objects.count()
-    total_bookings = HallBooking.objects.count()
-    total_revenue = HallBooking.objects.aggregate(total=Sum('price'))['total'] or 0
+    total_news = news_queryset.count()
+    total_bookings = booking_queryset.count()
 
-    popular_booking_date = HallBooking.objects.values('date').annotate(count=Count('id')).order_by('-count').first()
+    # Общая выручка
+    total_hall_revenue = booking_queryset.aggregate(total=Sum('price'))['total'] or 0
+    total_ticket_revenue = ticket_queryset.aggregate(
+        total=Sum(F('event__price') * F('quantity'))
+    )['total'] or 0
+    total_revenue = total_hall_revenue + total_ticket_revenue
 
-    return render(request, 'main/site_statistics.html', {
-        'total_users': total_users,
-        'total_news': total_news,
-        'total_bookings': total_bookings,
-        'total_revenue': total_revenue,
-        'popular_booking_date': popular_booking_date,
+    # Самый популярный день
+    popular_booking_date = booking_queryset.values('date').annotate(count=Count('id')).order_by('-count').first()
+
+    # График: выручка по дням (за последние 30 дней или за выбранный период)
+    # График: выручка по дням
+    if start:
+        revenue_data = (
+            HallBooking.objects
+            .filter(date__gte=start - timedelta(days=30))
+            .extra({'day': "date(date)"})
+            .values('day')
+            .annotate(total=Sum('price'))
+            .order_by('day')
+        )
+    else:
+        # Берём данные за последние 30 дней
+        last_30_days = datetime.today() - timedelta(days=30)
+        revenue_data = (
+            HallBooking.objects
+            .filter(date__gte=last_30_days)
+            .extra({'day': "date(date)"})
+            .values('day')
+            .annotate(total=Sum('price'))
+            .order_by('day')
+        )
+
+
+@login_required
+def add_to_cart(request, event_id, seat_id):
+    event = get_object_or_404(Events, id=event_id)
+    seat = get_object_or_404(Seat, id=seat_id, event=event)
+
+    # Проверяем, занято ли место
+    if seat.is_taken:
+        messages.error(request, 'Это место уже занято.')
+        return redirect('events_detail', events_id=event.id)
+
+    # Создаем/обновляем элемент корзины
+    cart_item, created = CartItem.objects.get_or_create(
+        user=request.user,
+        event=event,
+        seat=seat
+    )
+
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+
+    # Блокируем место
+    seat.is_taken = True
+    seat.user = request.user
+    seat.save()
+
+    messages.success(request, f'Место {seat.row}-{seat.number} добавлено в корзину.')
+    return redirect('events_detail', events_id=event.id)
+
+
+@login_required
+def view_cart(request):
+    # Удаляем устаревшие элементы и освобождаем места
+    old_items = CartItem.objects.filter(
+        user=request.user,
+        added_at__lt=timezone.now() - timedelta(minutes=15)
+    )
+
+    for item in old_items:
+        seat = item.seat
+        seat.is_taken = False
+        seat.user = None
+        seat.save()
+        item.delete()
+
+    cart_items = CartItem.objects.filter(user=request.user)
+    total_price = sum(item.event.price * item.quantity for item in cart_items)
+
+    return render(request, 'main/cart.html', {
+        'cart_items': cart_items,
+        'total_price': total_price
     })
+
+
+@login_required
+def remove_from_cart(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
+    seat = cart_item.seat
+
+    # Освобождаем место
+    seat.is_taken = False
+    seat.user = None
+    seat.save()
+
+    cart_item.delete()
+    messages.info(request, 'Билет удален из корзины. Место снова доступно.')
+    return redirect('view_cart')
+
+
+@transaction.atomic
+@login_required
+def process_payment(request):
+    cart_items = CartItem.objects.filter(user=request.user)
+
+    if not cart_items.exists():
+        messages.warning(request, 'Корзина пуста.')
+        return redirect('view_cart')
+
+    total_price = sum(item.event.price * item.quantity for item in cart_items)
+    user = request.user
+
+    if user.balance < total_price:
+        messages.error(request, 'Недостаточно средств на балансе.')
+        return redirect('view_cart')
+
+    try:
+        # Списание средств
+        user.balance -= total_price
+        user.save()
+
+        # Создание билетов и привязка мест
+        for item in cart_items:
+            ticket = Ticket.objects.create(
+                event=item.event,
+                user=user,
+                quantity=item.quantity
+            )
+            ticket.seats.add(item.seat)  # ← Сохраняем место в билете
+
+        # Очистка корзины
+        cart_items.delete()
+
+        messages.success(request, 'Оплата прошла успешно! Билеты оформлены.')
+
+    except Exception as e:
+        messages.error(request, 'Ошибка при обработке оплаты. Пожалуйста, попробуйте позже.')
+        return redirect('view_cart')
+
+    return redirect('view_cart')
+
+
+@transaction.atomic
+@login_required
+def process_single_payment(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id, user=request.user)
+    total_price = cart_item.event.price * cart_item.quantity
+    user = request.user
+
+    if user.balance < total_price:
+        messages.error(request, 'Недостаточно средств на балансе.')
+        return redirect('view_cart')
+
+    try:
+        # Списание средств
+        user.balance -= total_price
+        user.save()
+
+        # Создание билета и привязка места
+        ticket = Ticket.objects.create(
+            event=cart_item.event,
+            user=user,
+            quantity=cart_item.quantity
+        )
+        ticket.seats.add(cart_item.seat)  # ← Сохраняем место в билете
+
+        # Удаление из корзины
+        cart_item.delete()
+
+        messages.success(request, 'Билет успешно оплачен!')
+
+    except Exception as e:
+        messages.error(request, 'Ошибка при оплате билета. Пожалуйста, попробуйте позже.')
+
+    return redirect('view_cart')
