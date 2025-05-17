@@ -12,6 +12,15 @@
         .alert {
   transition: opacity 0.5s ease;
 }
+        .user_authen {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+        .user_authen .exit_btn {
+            padding: 5px;
+        }
     </style>
 </head>
 <body>
@@ -22,23 +31,23 @@
                 <a href="{% url 'news_list' %}" class="text-black me-3">Новости</a>
                 <a href="{% url 'events_list' %}" class="text-black me-3">События</a>
             </nav>
-            <nav class="">
+            <nav class="user_authen">
                 {% if user.is_authenticated %}
                 <a class="text-black me-3" href="{% url 'profile' %}">Профиль</a>
                 <a class="text-black me-3" href="{% url 'top_up_balance' %}">Пополнить баланс</a>
                 <a class="text-black me-3" href="{% url 'payment_history' %}">История платежей</a>
                 <a class="text-black me-3" href="{% url 'book_hall' %}">Бронирование зала</a>
                 <a href="{% url 'view_cart' %}" class="">Корзина</a>
+                {% if user.is_superuser %}
+                <a  href="{% url 'admin_panel' %}" class="text-black">Админ-панель</a>
+                {% endif %}
                 <form action="{% url 'logout' %}" method="post">
                 {% csrf_token %}
-                    <button class="logout_btn" type="submit">Выйти</button>
+                    <button  class="logout_btn exit_btn" type="submit">Выйти</button>
                 </form>
                 {% else %}
                 <a href="{% url 'register' %}" class=" me-3">Зарегистрироваться</a>
                 <a href="{% url 'login' %}" class="">Войти</a>
-                {% endif %}
-                {% if user.is_superuser %}
-                <a  href="{% url 'admin_panel' %}" class="text-black">Админ-панель</a>
                 {% endif %}
             </nav>
         </div>
@@ -62,7 +71,6 @@
   document.addEventListener("DOMContentLoaded", function () {
     // Находим все элементы с классом "alert"
     var alerts = document.querySelectorAll(".alert");
-
     alerts.forEach(function (alert) {
       // Скрываем сообщение через 2 секунды
       setTimeout(function () {

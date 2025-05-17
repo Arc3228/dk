@@ -11,7 +11,7 @@ body {
 }
 
 .header {
-text-align: center;
+    text-align: center;
 }
 
 .logo {
@@ -20,17 +20,16 @@ text-align: center;
 }
 
 a {
-text-decoration: none;
+    text-decoration: none;
     color: #333;
 }
 
 .container {
-    width: 1720px;
-    max-width: 1700px;
+    max-width: 90%;
     margin: 30px auto;
     background: #ffffff;
     padding: 25px 30px;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -46,7 +45,7 @@ form {
 }
 
 ul li {
-list-style: none;
+    list-style: none;
 }
 
 input[type="text"],
@@ -77,16 +76,16 @@ button {
 }
 
 input[type="submit"]:hover,
-button:hover {
+    button:hover {
     
 }
 
 .logout_btn {
-background: #c40606;
+    background: #c40606;
 }
 
 .logout_btn:hover {
-background: #b01010;
+    background: #b01010;
 }
 
 .table {
@@ -162,4 +161,8 @@ background: #b01010;
 
 .card {
     max-width: 300px;
+}
+
+.form-row {
+    align-items: center;
 }

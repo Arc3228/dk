@@ -5,11 +5,13 @@ from .models import News, CustomUser, Events, Ticket, HallBooking
 
 
 class SignUpForm(UserCreationForm):
+    username = forms.CharField(label='Имя пользователя', required=True)
     name = forms.CharField(max_length=50, label='Имя')
     surname = forms.CharField(max_length=100, label='Фамилия')
     lastname = forms.CharField(max_length=100, label='Отчество')
     phone_number = forms.CharField(max_length=18, required=True, label='Номер телефона')
     email = forms.EmailField(max_length=254, label='Почта')
+
 
     class Meta:
         model = CustomUser

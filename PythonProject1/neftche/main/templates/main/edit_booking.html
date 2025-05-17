@@ -1,13 +1,36 @@
 {% extends 'main/base.html' %}
 
 {% block content %}
+<style>
+    .btns_edit_book {
+        display: flex;
+        gap: 20px;
+    }
+
+    .login-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .login-group p {
+    display: flex;
+    flex-direction: column;
+  }
+  .login-group input {
+    width: 350px;
+  }
+</style>
+
+
 <div class="container mt-4">
     <h2>Редактировать бронирование: {{ booking.event_name }}</h2>
-    <form method="post">
+    <form method="post" class="login-group">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Сохранить</button>
-        <a href="{% url 'hall_bookings' %}" class="btn btn-secondary">Назад</a>
+        <div class="btns_edit_book">
+            <button type="submit" class="btn btn-success">Сохранить</button>
+            <a href="{% url 'hall_bookings' %}" class="btn btn-secondary">Назад</a>
+        </div>
     </form>
 </div>
 {% endblock %}

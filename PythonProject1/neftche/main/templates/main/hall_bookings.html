@@ -3,12 +3,13 @@
 
 
 {% block content %}
-<div class="container mt-4">
+<div class="mt-4">
     <h2>Управление бронированиями</h2>
     <table class="table table-bordered mt-3">
         <thead>
             <tr>
-                <th>Событие</th>
+                <th>Название</th>
+                <th>ФИО забронировавшего</th>
                 <th>Дата</th>
                 <th>Время</th>
                 <th>Длительность (ч)</th>
@@ -21,6 +22,7 @@
             {% for booking in bookings %}
             <tr>
                 <td>{{ booking.event_name }}</td>
+                <td>{{ booking.user.surname }} {{ booking.user.name }} {{ booking.user.lastname }}</td>
                 <td>{{ booking.date }}</td>
                 <td>{{ booking.time|time:"H:i" }}</td>
                 <td>{{ booking.duration }}</td>

@@ -66,12 +66,12 @@
   }
 </style>
 
-<div class="container">
-  <h2>История</h2>
+<div>
+  <h2>История платежей</h2>
 
   <!-- Вкладки -->
   <div class="tabs">
-    <button class="tab-button active" onclick="openTab(event, 'payments')">Платежи</button>
+    <button class="tab-button active" onclick="openTab(event, 'payments')">Бронирования</button>
     <button class="tab-button" onclick="openTab(event, 'tickets')">Билеты</button>
   </div>
 
@@ -114,7 +114,6 @@
           <tr>
             <th>Мероприятие</th>
             <th>Дата покупки</th>
-            <th>Количество</th>
             <th>Сумма</th>
             <th>Места</th>
           </tr>
@@ -125,7 +124,6 @@
             <tr>
               <td>{{ ticket.event.title }}</td>
               <td>{{ ticket.purchased_at|date:"d.m.Y H:i" }}</td>
-              <td>{{ ticket.quantity }}</td>
               <td>{{ total }} ₽</td>
               <td>
                 {% for seat in ticket.seats.all %}
@@ -139,7 +137,6 @@
           <tr>
             <td colspan="3">Итого</td>
             <td>{{ total_tickets }} ₽</td>
-            <td></td>
           </tr>
         </tfoot>
       </table>

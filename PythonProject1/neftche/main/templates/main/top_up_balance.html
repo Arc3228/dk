@@ -5,7 +5,6 @@
   label {
   font-weight: 600;
 }
-
 input {
   display: flex;
   flex-direction: row;
@@ -22,7 +21,6 @@ input {
   border-radius: 16px;
   transition: 0.2s;
 }
-
 .exp-cvc {
   justify-self: center;
   display: flex;
@@ -30,80 +28,62 @@ input {
   align-items: center;
   width: 90%;
 }
-
 .expiration {
   font-size: 0.75rem;
   width: 50%;
   margin-right: 20px;
 }
-
 .security {
   font-size: 0.75rem;
   width: 50%;
   margin-left: 20px;
 }
-
 span {
   padding-left: 5px;
   cursor: pointer;
 }
-
  .form-group {
   margin-bottom: 1rem;
 }
-
 input {
   width: 100%;
   padding: 0.5rem;
   font-size: 1rem;
 }
-
-
-
 .error-message {
   color: #dc3545;
   font-size: 0.875em;
   display: none;
 }
 </style>
-
-
-
   <h2>Пополнить баланс</h2>
   <form id="payment-form" method="post">
   {% csrf_token %}
-
   <div class="form-group">
     <label for="name">ФИО</label>
     <input type="text" id="name" name="name" placeholder="Name" required/>
     <small class="error-message" id="name-error"></small>
   </div>
-
   <div class="form-group">
     <label for="card">Номер карты</label>
     <input type="text" id="card" name="card" placeholder="0000 0000 0000 0000" required minlength="19" maxlength="19"/>
     <small class="error-message" id="card-error"></small>
   </div>
-
   <div class="exp-cvc">
     <div class="expiration form-group">
       <label for="expiry">Срок действия</label>
       <input type="text" id="expiry" name="expiry" placeholder="MM/YY" required maxlength="5"/>
       <small class="error-message" id="expiry-error"></small>
     </div>
-
     <div class="security form-group">
       <label for="cvc">CVC</label>
       <input type="text" id="cvc" name="cvc" placeholder="XXX" required maxlength="3"/>
       <small class="error-message" id="cvc-error"></small>
     </div>
   </div>
-
   {{ form.as_p }}
-
   <button type="submit" class="btn btn-primary">Пополнить</button>
 </form>
-
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const cardInput = document.getElementById("card");

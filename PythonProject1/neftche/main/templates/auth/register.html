@@ -1,14 +1,33 @@
 {% extends "main/base.html" %}
 {% block title %}Регистрация{% endblock %}
 {% block content %}
-<div class="container mt-4">
+<style>
+  .login-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .login-group p {
+    display: flex;
+    flex-direction: column;
+  }
+  .login-group input {
+    width: 350px;
+  }
+  .login-group ul {
+    color: #b01010;
+  }
+</style>
+
+
+<div class="mt-4">
   <h2>Регистрация</h2>
-  <form method="post">
+  <form method="post" class="login-group">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
   </form>
-  <p class="mt-3">Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+  <p class="mt-3 text-center">Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
 </div>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
