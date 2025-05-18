@@ -1,13 +1,25 @@
 {% extends 'main/base.html' %}
 {% block title %}{{ news.title }} - Нефтьче{% endblock %}
 {% block content %}
+<style>
+    img {
+        width: 400px;
+    }
+</style>
+
+
 <h1>{{ news.title }}</h1>
-{% if news.image %}<img src="{{ news.image.url }}" class="img-fluid mb-3">{% endif %}
-<div>{{ news.content|linebreaks }}</div>
-<p class="text-muted">{{ news.pub_date|date:"d.m.Y H:i" }}</p>
-    <a href="{% url 'home' %}" class="btn btn-primary mt-3">Назад</a>
+<div class="d-flex" style="gap: 40px;">
+    {% if news.image %}<img src="{{ news.image.url }}" class="img-fluid mb-3">{% endif %}
+    <div>
+        <div>{{ news.content|linebreaks }}</div>
+        <p class="text-muted">{{ news.pub_date|date:"d.m.Y H:i" }}</p>
+    </div>
+</div>
+<a href="{% url 'home' %}" class="btn btn-primary mt-3">Назад</a>
 {% if user.is_superuser %}
     <a href="{% url 'news_edit' news.id %}" class="">Редактировать</a>
     <a href="{% url 'news_delete' news.id %}" class="">Удалить</a>
 {% endif %}
+
 {% endblock %}

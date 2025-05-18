@@ -2,8 +2,6 @@ from datetime import timedelta, datetime, date
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import News, CustomUser, Events, Ticket, HallBooking
-
-
 class SignUpForm(UserCreationForm):
     username = forms.CharField(label='Имя пользователя', required=True)
     name = forms.CharField(max_length=50, label='Имя')
