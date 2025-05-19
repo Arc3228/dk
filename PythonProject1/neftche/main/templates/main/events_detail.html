@@ -9,10 +9,8 @@
         <p><strong>Цена билета:</strong> {{ events.price }} ₽</p>
         <p>{{ events.data|date:"d.m.Y H:i" }}</p>
     </div>
-
 </div>
-
-
+<a href="{% url 'home' %}" class="btn btn-primary">Назад</a>
 {% endblock %}
 
 {% block content2 %}
@@ -23,7 +21,6 @@
     img {
         width: 300px;
     }
-
   .seating-area {
     max-width: ;
     background-color: #111;
@@ -31,7 +28,6 @@
     border-radius: 10px;
     display: inline-block;
   }
-
   .seat {
     width: 38px;
     height: 30px;
@@ -47,7 +43,6 @@
     cursor: pointer;
     padding: 0;
   }
-
   .seat.taken {
     background-color: #dc3545; /* красный */
     cursor: not-allowed;
@@ -58,7 +53,6 @@
        justify-content: center;
    }
 </style>
-
 <div class="seating-area">
   {% for seat in events.seats.all %}
     <div class="seat {% if seat.is_taken %}taken{% endif %}"
@@ -72,12 +66,10 @@
   {% endfor %}
 </div>
 <div class="btns_events_detail mt-3">
-    <a href="{% url 'home' %}" class="btn btn-primary">Назад</a>
     {% if user.is_superuser %}
         <a class="btn btn-warning"  href="{% url 'events_edit' events.id %}">Редактировать</a>
         <a class="btn btn-danger" href="{% url 'events_delete' events.id %}">Удалить</a>
     {% endif %}
 </div>
-
 <br>
 {% endblock %}

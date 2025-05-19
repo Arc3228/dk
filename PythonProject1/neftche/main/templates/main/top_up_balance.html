@@ -1,8 +1,7 @@
 {% extends 'main/base.html' %}
-
 {% block content %}
 <style>
-  label {
+label {
   font-weight: 600;
 }
 input {
@@ -127,7 +126,7 @@ form.addEventListener("submit", function (e) {
     showError("name-error", "Введите имя");
     isValid = false;
   } else if (!nameRegex.test(nameValue)) {
-    showError("name-error", "Только английские буквы и пробелы");
+    showError("name-error", "Только английские буквы");
     isValid = false;
   } else {
     hideError("name-error");

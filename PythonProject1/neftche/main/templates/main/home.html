@@ -1,8 +1,8 @@
 {% extends 'main/base.html' %}
 {% block content %}
 <h1>Добро пожаловать в ДК "Нефтьче"</h1>
-<h3>Дворец культуры «Нефтьче» является крупнейшей концертной площадкой на юго-востоке Республики со зрительным залом на 987 мест. Руководит Дворцом культуры Рамиль Ильдарович Садриев.
-В 2023 году ДК «Нефтьче» стал членом Союза концертных организаций России (СКОР)</h3>
+<h5>Дворец культуры «Нефтьче» является крупнейшей концертной площадкой на юго-востоке Республики со зрительным залом на 987 мест. Руководит Дворцом культуры Рамиль Ильдарович Садриев.
+В 2023 году ДК «Нефтьче» стал членом Союза концертных организаций России (СКОР)</h5>
 <div class="row">
     <h2>Наши новости</h2>
     <div>
@@ -11,7 +11,7 @@
             <div class="card home_card">
                 <img src="{{ news.image.url }}" class="card-img-top">
                 <div class="card-body">
-                    <h5 class="card-title">{{ news.title }}</h5>
+                    <h6 class="card-title">{{ news.title }}</h6>
                     <p class="card-text">{{ news.content|truncatewords:20 }}</p>
                     <a href="{% url 'news_detail' news.id %}" class="btn btn-primary">Читать далее</a>
                 </div>
@@ -30,7 +30,7 @@
                     <img src="{{ event.image.url }}" class="card-img-top">
                 {% endif %}
                 <div class="card-body">
-                    <h5 class="card-title">{{ event.title }}</h5>
+                    <h6 class="card-title">{{ event.title }}</h6>
                     <p class="card-text">{{ event.data|date:"d.m.Y H:i" }}</p>
                     <p class="card-text">{{ event.price|truncatewords:20 }} ₽</p>
                     <a href="{% url 'events_detail' event.id %}" class="btn btn-primary">Подробнее</a>

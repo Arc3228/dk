@@ -7,15 +7,10 @@
     <list default="true" id="69a2fa03-f5fd-4a77-a61c-77c8b0116b0c" name="Changes" comment="немного всякого">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/book_hall.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/book_hall.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/static/main/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/static/main/css/style.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/events_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/events_detail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/events_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/events_form.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/home.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/news_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/news_detail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/news_form.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/news_form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/site_statistics.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/site_statistics.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/top_up_balance.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/top_up_balance.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -224,7 +219,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747581375229</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="немного всякого">
+      <option name="closed" value="true" />
+      <created>1747674304385</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1747674304385</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
