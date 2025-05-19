@@ -26,7 +26,7 @@
 <body>
     <header class="header wrapper">
         <div class="container">
-            <div class="logo"><a href="/" class="logo_link">ДК "Нефтьче"</a></div>
+            <div class="logo"><a href="/" class="logo_link"><img class="logo_img" src="{% static 'main/logo.svg' %}" alt="logo"></a></div>
             <nav>
                 <a href="{% url 'news_list' %}" class="text-black me-3">Новости</a>
                 <a href="{% url 'events_list' %}" class="text-black me-3">События</a>
@@ -72,9 +72,6 @@
 
         {% endblock %}
     </div>
-
-
-
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     // Находим все элементы с классом "alert"

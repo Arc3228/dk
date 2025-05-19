@@ -200,14 +200,14 @@
     </div>
     {% endif %}
 </div>
-
-<!--<div class="chart-card">
+<div class="chart-card">
     <h4>График выручки</h4>
     <canvas id="revenueChart"></canvas>
     {% if not revenue_data %}
     <div class="no-data">Нет данных для отображения графика</div>
-    {% endif %}-->
-<!--</div>-->
+    {% endif %}
+</div>
+<a href="{% url 'admin_panel' %}" class="btn btn-primary mt-3">Назад</a>
 
 {% endblock %}
 
@@ -218,8 +218,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const ctx = document.getElementById('revenueChart').getContext('2d');
-    const revenueData = {{ revenue_data|safe }};
-
+    const revenueData = "{{ revenue_data|safe }}";
+    console.log("{{ revenue_data }}");
     console.log('Revenue Data:', revenueData); // Для отладки
 
     if (revenueData.length === 0) {

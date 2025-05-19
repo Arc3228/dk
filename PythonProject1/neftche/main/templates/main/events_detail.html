@@ -71,10 +71,6 @@
     {% if forloop.counter|divisibleby:30 %}<br>{% endif %}
   {% endfor %}
 </div>
-
-
-
-
 <div class="btns_events_detail mt-3">
     <a href="{% url 'home' %}" class="btn btn-primary">Назад</a>
     {% if user.is_superuser %}

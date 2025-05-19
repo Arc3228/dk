@@ -13,6 +13,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.dateparse import parse_date
 from xhtml2pdf import pisa
 from . import forms
+from django.core.mail import send_mail
 from django.db.models import Sum, Count, F
 from .forms import NewsForm, SignUpForm, LoginForm, EventsForm, TicketPurchaseForm, BalanceTopUpForm, HallBookingForm
 from django.contrib import messages
