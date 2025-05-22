@@ -39,7 +39,7 @@ def news_detail(request, news_id):
 
 
 def events_list(request):
-    events_list = Events.objects.order_by('-pub_date')
+    events_list = Events.objects.filter(is_archived=False).order_by('-pub_date')
     return render(request, 'main/events_list.html', {'events_list': events_list})
 
 
@@ -190,22 +190,7 @@ def events_delete(request, pk):
     return redirect('home')
 
 
-@login_required
-def buy_ticket(request, events_id):
-    event = get_object_or_404(Events, id=events_id)
 
-    if request.method == 'POST':
-        if request.user.balance >= event.price:
-            Ticket.objects.create(user=request.user, event=event)
-            request.user.balance -= event.price
-            request.user.save()
-            messages.success(request, f'Вы успешно купили билет на "{event.title}"!')
-            return redirect('profile')
-        else:
-            messages.error(request, 'Недостаточно средств для покупки билета.')
-            return redirect('top_up_balance')
-
-    return render(request, 'main/buy_ticket.html', {'event': event})
 
 
 def ticket_detail(request, ticket_id):
@@ -388,12 +373,12 @@ def get_booked_slots(request):
 def edit_booking(request, booking_id):
     booking = get_object_or_404(HallBooking, id=booking_id)
     if request.method == 'POST':
-        form = HallBookingForm(request.POST, instance=booking)
+        form = HallBookingForm(request.POST, instance=booking, user=request.user)
         if form.is_valid():
             form.save()
             return redirect('hall_bookings')
     else:
-        form = HallBookingForm(instance=booking)
+        form = HallBookingForm(instance=booking, user=request.user)
     return render(request, 'main/edit_booking.html', {'form': form, 'booking': booking})
 
 
@@ -410,6 +395,9 @@ def payment_history(request):
     # Получаем платежи и билеты пользователя
     payments = PaymentHistory.objects.filter(user=request.user).order_by('-created_at')
     tickets = Ticket.objects.filter(user=request.user).select_related('event').order_by('-purchased_at')
+    # Получаем архивные мероприятия и бронирования
+    archived_events = Events.objects.filter(is_archived=True, author=request.user).order_by('-data')
+    archived_bookings = HallBooking.objects.filter(is_archived=True, user=request.user).order_by('-date')
 
     # Рассчитываем общую сумму платежей
     total_payments = payments.aggregate(total=Sum('amount'))['total'] or 0
@@ -421,8 +409,26 @@ def payment_history(request):
         'payments': payments,
         'tickets': tickets,
         'total_payments': total_payments,
-        'total_tickets': total_tickets
+        'total_tickets': total_tickets,
+        'archived_events': archived_events,
+        'archived_bookings': archived_bookings,
     })
+
+
+def update_archives():
+    # Update Events
+    for event in Events.objects.filter(is_archived=False):
+        if event.data and event.data < timezone.now():
+            event.is_archived = True
+            event.save()
+
+    # Update HallBookings
+    for booking in HallBooking.objects.filter(is_archived=False):
+        booking_datetime = timezone.datetime.combine(booking.date, booking.time)
+        booking_datetime = timezone.make_aware(booking_datetime)
+        if booking_datetime < timezone.now():
+            booking.is_archived = True
+            booking.save()
 
 
 logger = logging.getLogger(__name__)

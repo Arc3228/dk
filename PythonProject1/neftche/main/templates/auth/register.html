@@ -17,6 +17,22 @@
   .login-group ul {
     color: #b01010;
   }
+
+  .is-valid {
+    border-color: #28a745 !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+  }
+
+  .is-invalid {
+      border-color: #dc3545 !important;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right calc(0.375em + 0.1875rem) center;
+      background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+  }
 </style>
 
 
@@ -30,25 +46,67 @@
   <p class="mt-3 text-center">Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
 </div>
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-        const fields = document.querySelectorAll("input, select, textarea");
 
-        fields.forEach(field => {
-            field.addEventListener("input", function () {
-                if (field.checkValidity()) {
-                    field.classList.remove("is-invalid");
-                    field.classList.add("is-valid");
-                } else {
-                    field.classList.remove("is-valid");
-                    field.classList.add("is-invalid");
-                }
-            });
-            field.addEventListener("blur", function () {
-                if (!field.checkValidity()) {
-                    field.classList.add("is-invalid");
-                }
-            });
+document.addEventListener("DOMContentLoaded", function() {
+    // Обработчик для ФИО
+    const cyrillicInputs = document.querySelectorAll('[data-cyrillic-input]');
+    cyrillicInputs.forEach(input => {
+        input.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/[^А-Яа-яЁё\- ]/g, '');
+            value = value.replace(/\s+/g, ' ').trim();
+            e.target.value = value;
+
+            if(value.length > 0) {
+                e.target.classList.add('is-valid');
+                e.target.classList.remove('is-invalid');
+            } else {
+                e.target.classList.remove('is-valid');
+                e.target.classList.add('is-invalid');
+            }
+        });
+
+        input.addEventListener('blur', function(e) {
+            e.target.value = e.target.value
+                .replace(/(^|\s|[-])\S/g, m => m.toUpperCase());
         });
     });
+
+    // Обработчик для телефона
+    const phoneInput = document.querySelector('[data-phone-input]');
+
+    function formatPhone() {
+        let value = phoneInput.value.replace(/\D/g, '');
+        let formattedValue = '+7';
+
+        if (value.length > 1) {
+            value = value.substring(1);
+            formattedValue = '+7 ' + (value.length > 0 ? '(' + value.substring(0, 3) : '');
+            if (value.length > 3) formattedValue += ') ' + value.substring(3, 6);
+            if (value.length > 6) formattedValue += '-' + value.substring(6, 8);
+            if (value.length > 8) formattedValue += '-' + value.substring(8, 10);
+        }
+
+        phoneInput.value = formattedValue;
+    }
+
+    phoneInput.addEventListener('input', formatPhone);
+    phoneInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Backspace' || e.key === 'Delete') return;
+        if (e.key.match(/\D/)) e.preventDefault();
+    });
+
+    // Общая валидация для всех полей
+    document.querySelector('form').addEventListener('submit', function(e) {
+        let allValid = true;
+        document.querySelectorAll('input').forEach(input => {
+            if (!input.checkValidity()) {
+                input.classList.add('is-invalid');
+                allValid = false;
+            }
+        });
+        if (!allValid) e.preventDefault();
+    });
+});
+
 </script>
 {% endblock %}

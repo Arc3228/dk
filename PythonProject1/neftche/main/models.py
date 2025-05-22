@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -11,12 +13,14 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=18, blank=True, null=True)
 
 
+
 class News(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
     image = models.ImageField(upload_to='news_images/', blank=True, null=True)
     pub_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=1)
+
 
 class Events(models.Model):
     title = models.CharField(max_length=200)
@@ -26,9 +30,16 @@ class Events(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default=1)
     data = models.DateTimeField(blank=True, null=True)
+    is_archived = models.BooleanField(default=False)  # New field for archiving
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        # Automatically archive if event date is in the past
+        if self.data and self.data < timezone.now():
+            self.is_archived = True
+        super().save(*args, **kwargs)
 
 class Ticket(models.Model):
     event = models.ForeignKey(Events, on_delete=models.CASCADE, related_name='tickets')
@@ -51,6 +62,7 @@ class Seat(models.Model):
     def __str__(self):
         return f"Ряд {self.row}, Место {self.number} ({'занято' if self.is_taken else 'свободно'})"
 
+
 class HallBooking(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     event_name = models.CharField(max_length=255)
@@ -60,10 +72,18 @@ class HallBooking(models.Model):
     check_oborydovanie = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     price = models.PositiveIntegerField(default=0, help_text="Стоимость бронирования в рублях")
+    is_archived = models.BooleanField(default=False)  # New field for archiving
 
     def __str__(self):
         return f"{self.event_name} ({self.date} {self.time}) от {self.user}"
 
+    def save(self, *args, **kwargs):
+        # Combine date and time to check if booking is in the past
+        booking_datetime = timezone.datetime.combine(self.date, self.time)
+        booking_datetime = timezone.make_aware(booking_datetime)  # Make timezone-aware
+        if booking_datetime < timezone.now():
+            self.is_archived = True
+        super().save(*args, **kwargs)
 
 
 def create_seats_for_event(event):

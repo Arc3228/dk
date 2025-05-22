@@ -12,7 +12,7 @@ urlpatterns = [
     path('news/detail/<int:news_id>', views.news_detail, name='news_detail'),
     path('events', views.events_list, name='events_list'),
     path('events/detail/<int:events_id>', views.events_detail, name='events_detail'),
-    path('events/<int:events_id>/buy/', views.buy_ticket, name='buy_ticket'),
+
     path('profile/', views.profile, name='profile'),
     path('top-up/', views.top_up_balance, name='top_up_balance'),
     path('book-hall/', views.book_hall, name='book_hall'),

@@ -3,7 +3,6 @@
 {% block content %}
 
 <style>
-
   h2 {
     margin-bottom: 20px;
   }
@@ -73,6 +72,9 @@
   <div class="tabs">
     <button class="tab-button active" onclick="openTab(event, 'payments')">Бронирования</button>
     <button class="tab-button" onclick="openTab(event, 'tickets')">Билеты</button>
+    {% if user.is_superuser %}
+    <button class="tab-button" onclick="openTab(event, 'archive')">Архив</button>
+    {% endif %}
   </div>
 
   <!-- Контент вкладок -->
@@ -144,6 +146,60 @@
       <p>Билетов пока нет.</p>
     {% endif %}
   </div>
+
+
+  {% if user.is_superuser %}
+    <div id="archive" class="tab-content">
+    <h3>Архивные мероприятия</h3>
+    {% if archived_events %}
+      <table>
+        <thead>
+          <tr>
+            <th>Название</th>
+            <th>Дата</th>
+            <th>Цена</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for event in archived_events %}
+            <tr>
+              <td>{{ event.title }}</td>
+              <td>{{ event.data|date:"d.m.Y H:i" }}</td>
+              <td>{{ event.price }} ₽</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>Архивных мероприятий нет.</p>
+    {% endif %}
+
+    <h3>Архивные бронирования</h3>
+    {% if archived_bookings %}
+      <table>
+        <thead>
+          <tr>
+            <th>Название</th>
+            <th>Дата и время</th>
+            <th>Стоимость</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for booking in archived_bookings %}
+            <tr>
+              <td>{{ booking.event_name }}</td>
+              <td>{{ booking.date|date:"d.m.Y" }} {{ booking.time|time:"H:i" }}</td>
+              <td>{{ booking.price }} ₽</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>Архивных бронирований нет.</p>
+    {% endif %}
+    </div>
+  {% endif %}
+
 </div>
 
 <script>

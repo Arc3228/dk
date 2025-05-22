@@ -1,5 +1,7 @@
 {% extends 'main/base.html' %}
 
+{% block title %}Редактировать бронирование{% endblock %}
+
 {% block content %}
 <style>
     .btns_edit_book {
@@ -8,29 +10,99 @@
     }
 
     .login-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .login-group p {
-    display: flex;
-    flex-direction: column;
-  }
-  .login-group input {
-    width: 350px;
-  }
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .login-group p {
+        display: flex;
+        flex-direction: column;
+    }
+    .login-group input {
+        width: 350px;
+    }
+    .errorlist {
+        color: red;
+    }
+    input:invalid {
+        border-color: #ff0000;
+    }
 </style>
-
 
 <div class="container mt-4">
     <h2>Редактировать бронирование: {{ booking.event_name }}</h2>
-    <form method="post" class="login-group">
+    <p class="text-center">1 час - 25000 ₽</p>
+    <form method="post" id="booking-form" class="login-group">
         {% csrf_token %}
         {{ form.as_p }}
+        <div id="price-info" class="mt-3 mb-3" style="font-weight: bold;">Цена бронирования: 0 ₽</div>
         <div class="btns_edit_book">
             <button type="submit" class="btn btn-success">Сохранить</button>
             <a href="{% url 'hall_bookings' %}" class="btn btn-secondary">Назад</a>
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const timeInput = document.getElementById('id_time');
+    const durationInput = document.getElementById('id_duration');
+    const fullDayCheckbox = document.getElementById('id_full_day');
+    const equipmentCheckbox = document.getElementById('id_check_oborydovanie');
+    const priceInfo = document.getElementById('price-info');
+
+    // Функция округления времени до 30 минут
+    function roundTime(timeString) {
+        const [hours, minutes] = timeString.split(':');
+        let roundedMinutes = Math.round(minutes / 30) * 30;
+        if(roundedMinutes === 60) {
+            return `${String(Number(hours)+1).padStart(2, '0')}:00`;
+        }
+        return `${hours}:${String(roundedMinutes).padStart(2, '0')}`;
+    }
+
+    // Обработчик изменения времени
+    timeInput.addEventListener('change', function() {
+        if(fullDayCheckbox.checked) return;
+        this.value = roundTime(this.value);
+        updatePrice();
+    });
+
+    // Обработчик полного дня
+    fullDayCheckbox.addEventListener('change', function() {
+        if(this.checked) {
+            timeInput.value = '10:00';
+            durationInput.value = '10';
+        }
+        updatePrice();
+    });
+
+    // Функция обновления цены
+    function updatePrice() {
+        let price = 0;
+        const pricePerHour = 25000;
+
+        if(fullDayCheckbox.checked) {
+            price = pricePerHour * 10;
+        } else {
+            const duration = parseFloat(durationInput.value) || 0;
+            price = pricePerHour * duration;
+        }
+
+        if(equipmentCheckbox.checked) {
+            price = Math.round(price * 1.1);
+        }
+
+        priceInfo.textContent = `Цена бронирования: ${price.toLocaleString('ru-RU')} ₽`;
+    }
+
+    // Слушатели событий
+    [durationInput, fullDayCheckbox, equipmentCheckbox].forEach(element => {
+        element?.addEventListener('input', updatePrice);
+    });
+
+    // Инициализация цены при загрузке страницы
+    updatePrice();
+});
+</script>
 {% endblock %}
