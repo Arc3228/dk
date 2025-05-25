@@ -1,0 +1,64 @@
+{% extends 'main/base.html' %}
+{% block title %}Чат с {{ chat.user.username }}{% endblock %}
+{% block content %}
+<style>
+    .alert {
+        display: none;
+    }
+</style>
+
+
+    <h2>Чат с {{ chat.user.username }}</h2>
+    <div id="chat-messages">
+        {% for message in messages %}
+            <p><strong>{{ message.sender.username }}</strong> ({{ message.timestamp }}): {{ message.content }}</p>
+        {% endfor %}
+    </div>
+    <input type="text" id="message-input" placeholder="Введите сообщение">
+    <button onclick="sendMessage()">Отправить</button>
+
+    <script>
+        const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+        const chatSocket = new WebSocket(
+            protocol + window.location.host + '/ws/chat/{{ chat.id }}/'
+        );
+
+        chatSocket.onopen = function(e) {
+            console.log('WebSocket connection established');
+        };
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            const messageElement = document.createElement('p');
+            messageElement.innerHTML = `<strong>${data.sender}</strong> (${data.timestamp}): ${data.message}`;
+            document.getElementById('chat-messages').appendChild(messageElement);
+            document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+        };
+
+        chatSocket.onerror = function(e) {
+            console.error('WebSocket error:', e);
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('WebSocket closed unexpectedly:', e);
+        };
+
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+            if (message !== '') {
+                chatSocket.send(JSON.stringify({
+                    'message': message
+                }));
+                messageInput.value = '';
+            }
+        }
+
+        // Отправка сообщения по нажатию Enter
+        document.getElementById('message-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+{% endblock %}

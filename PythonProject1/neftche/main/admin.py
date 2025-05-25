@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import News, HallBooking, Events, create_seats_for_event, Seat, Ticket, CartItem, CustomUser
+from .models import News, HallBooking, Events, create_seats_for_event, Seat, Ticket, CartItem, CustomUser, Chat, Message
+
+
 @admin.register(News)
 class NewsAdmin(admin.ModelAdmin):
     list_display = ('title', 'pub_date')
@@ -29,3 +31,5 @@ class SeatAdmin(admin.ModelAdmin):
 admin.site.register(Ticket)
 admin.site.register(CartItem)
 admin.site.register(CustomUser)
+admin.site.register(Chat)
+admin.site.register(Message)

@@ -31,7 +31,7 @@
         flex: 1;
         min-width: 200px;
     }
-    .form-group label {
+    .form"group label {
         display: block;
         margin-bottom: 8px;
         font-weight: bold;
@@ -175,6 +175,7 @@
             </div>
         </div>
     </form>
+    <a href="{% url 'site_statistics' %}" class="btn btn-primary mt-3">Очистить</a>
 </div>
 
 <div class="stats-container">
@@ -209,36 +210,37 @@
 </div>
 <a href="{% url 'admin_panel' %}" class="btn btn-primary mt-3">Назад</a>
 
-{% endblock %}
 
-{% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/date-fns@2.30.0/dist/date-fns.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('revenueChart').getContext('2d');
-    const revenueData = "{{ revenue_data|safe }}";
-    console.log("{{ revenue_data }}");
-    console.log('Revenue Data:', revenueData); // Для отладки
+    let revenueData;
 
-    if (revenueData.length === 0) {
-        console.warn('No data available for the chart');
+    try {
+        revenueData = JSON.parse('{{ revenue_data|safe }}');
+        console.log('Parsed Revenue Data:', revenueData);
+    } catch (e) {
+        console.error('Error parsing revenueData:', e);
+        revenueData = [];
+    }
+
+    if (!Array.isArray(revenueData) || revenueData.length === 0) {
+        console.warn('No valid data available for the chart');
+        document.querySelector('.no-data').style.display = 'block';
         return;
     }
 
-    const labels = revenueData.map(item => item.day);
-    const data = revenueData.map(item => item.total);
-
-    new Chart(ctx, {
+    const chartConfig = {
         type: 'line',
         data: {
-            labels: labels,
+            labels: revenueData.map(item => item.day),
             datasets: [{
                 label: 'Выручка (₽)',
-                data: data,
-                borderColor: 'rgb(75, 192, 192)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                data: revenueData.map(item => item.total),
+                borderColor: '#3498db',
+                backgroundColor: 'rgba(52, 152, 219, 0.2)',
                 fill: true,
                 tension: 0.1
             }]
@@ -250,7 +252,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     type: 'time',
                     time: {
                         unit: 'day',
-                        parser: 'yyyy-MM-dd',
                         displayFormats: {
                             day: 'MMM d, yyyy'
                         }
@@ -274,7 +275,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         }
-    });
+    };
+
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(ctx, chartConfig);
 });
 </script>
 {% endblock %}

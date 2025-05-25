@@ -26,6 +26,7 @@ urlpatterns = [
     path('cart/pay/', views.process_payment, name='process_payment'),
     path('cart/pay/<int:item_id>/', views.process_single_payment, name='process_single_payment'),
     path('ticket/<int:ticket_id>/download/', views.download_ticket, name='download_ticket'),
+    path('chat/', views.user_chat, name='user_chat'),
 
     # админ
     path('admin_panel', views.admin_panel, name='admin_panel'),
@@ -39,4 +40,6 @@ urlpatterns = [
     path('edit-booking/<int:booking_id>/', views.edit_booking, name='edit_booking'),
     path('delete-booking/<int:booking_id>/', views.delete_booking, name='delete_booking'),
     path('site-statistics/', views.site_statistics, name='site_statistics'),
+    path('admin_panel/chats/', views.admin_chat_list, name='admin_chat_list'),
+    path('admin_panel/chat/<int:chat_id>/', views.admin_chat, name='admin_chat'),
 ]

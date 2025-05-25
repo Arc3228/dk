@@ -174,3 +174,7 @@ input[type="submit"]:hover,
 .event-description {
     max-width: 950px;
 }
+
+.chat_link {
+text-decoration: underline;
+}

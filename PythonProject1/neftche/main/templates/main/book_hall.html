@@ -17,7 +17,6 @@
   .errorlist { color: red; }
   input:invalid { border-color: #ff0000; }
 </style>
-
 <div class="mt-4">
     <h2>Забронировать зал</h2>
     <p class="text-center">1 час - 25000 ₽</p>
@@ -28,7 +27,6 @@
         <button type="submit" class="btn btn-primary">Забронировать</button>
     </form>
 </div>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const timeInput = document.getElementById('id_time');
@@ -36,7 +34,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const fullDayCheckbox = document.getElementById('id_full_day');
     const equipmentCheckbox = document.getElementById('id_check_oborydovanie');
     const priceInfo = document.getElementById('price-info');
-
     // Функция округления времени до 30 минут
     function roundTime(timeString) {
         const [hours, minutes] = timeString.split(':');
@@ -46,49 +43,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return `${hours}:${String(roundedMinutes).padStart(2, '0')}`;
     }
-
     // Обработчик изменения времени
     timeInput.addEventListener('change', function() {
         if(fullDayCheckbox.checked) return;
         this.value = roundTime(this.value);
         updatePrice();
     });
-
     // Обработчик полного дня
     fullDayCheckbox.addEventListener('change', function() {
-
         if(this.checked) {
             timeInput.value = '10:00';
             durationInput.value = '10';
-
         }
         updatePrice();
     });
-
     // Функция обновления цены
     function updatePrice() {
         let price = 0;
         const pricePerHour = 25000;
-
         if(fullDayCheckbox.checked) {
             price = pricePerHour * 10;
         } else {
             const duration = parseFloat(durationInput.value) || 0;
             price = pricePerHour * duration;
         }
-
         if(equipmentCheckbox.checked) {
             price = Math.round(price * 1.1);
         }
-
         priceInfo.textContent = `Цена бронирования: ${price.toLocaleString('ru-RU')} ₽`;
     }
-
     // Слушатели событий
     [durationInput, fullDayCheckbox, equipmentCheckbox].forEach(element => {
         element?.addEventListener('input', updatePrice);
     });
-
     updatePrice();
 });
 </script>

@@ -1,4 +1,5 @@
 import base64
+import json
 import logging
 from datetime import datetime, timedelta, timezone
 from io import BytesIO
@@ -17,14 +18,14 @@ from django.core.mail import send_mail
 from django.db.models import Sum, Count, F
 from .forms import NewsForm, SignUpForm, LoginForm, EventsForm, TicketPurchaseForm, BalanceTopUpForm, HallBookingForm
 from django.contrib import messages
-from .models import News, Events, Ticket, HallBooking, Seat, create_seats_for_event, PaymentHistory, CartItem
+from .models import News, Events, Ticket, HallBooking, Seat, create_seats_for_event, PaymentHistory, CartItem, Chat
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 
 def home(request):
     latest_news = News.objects.order_by('-pub_date')[:3]
-    events = Events.objects.all().order_by('-pub_date')[:5]
+    events = Events.objects.filter(is_archived=False).order_by('-pub_date')[:5]
     return render(request, 'main/home.html', {'latest_news': latest_news, 'events': events})
 
 
@@ -481,7 +482,7 @@ def site_statistics(request):
         payment_queryset = payment_queryset.filter(created_at__date__range=[start, end])
         events_queryset = events_queryset.filter(data__date__range=[start, end])
 
-    # Фильтрация по выбранному мероприятию (до расчета выручки)
+    # Фильтрация по выбранному мероприятию
     if selected_event:
         ticket_queryset = ticket_queryset.filter(event=selected_event)
         payment_queryset = payment_queryset.filter(description__icontains=selected_event.title)
@@ -489,38 +490,28 @@ def site_statistics(request):
         events_queryset = events_queryset.filter(id=selected_event.id)
 
     # Основная статистика
-    total_users = User.objects.count()  # Не зависит от мероприятия
+    total_users = User.objects.count()
     total_news = news_queryset.count()
     total_events_count = events_queryset.count()
     total_bookings = booking_queryset.count()
 
-    # Расчет выручки (учитывает выбранное мероприятие)
+    # Расчет выручки
     total_hall_revenue = booking_queryset.aggregate(total=Sum('price'))['total'] or 0
     total_ticket_revenue = ticket_queryset.aggregate(
         total=Sum(F('event__price') * F('quantity'))
     )['total'] or 0
     total_payment_revenue = payment_queryset.aggregate(total=Sum('amount'))['total'] or 0
-
-    # Общая выручка из всех источников
     total_revenue = total_hall_revenue + total_ticket_revenue + total_payment_revenue
 
     # Статистика по выбранному мероприятию
     if selected_event:
-        total_tickets_sold = ticket_queryset.aggregate(
-            total=Sum('quantity')
-        )['total'] or 0
-
-        # Выручка от билетов
+        total_tickets_sold = ticket_queryset.aggregate(total=Sum('quantity'))['total'] or 0
         total_ticket_revenue = ticket_queryset.aggregate(
             total=Sum(F('event__price') * F('quantity'))
         )['total'] or 0
-
-        # Выручка от платежей
         payment_revenue = payment_queryset.filter(
             description__icontains=selected_event.title
         ).aggregate(total=Sum('amount'))['total'] or 0
-
-        # Выручка по мероприятию
         event_revenue = total_ticket_revenue + payment_revenue
     else:
         total_tickets_sold = 0
@@ -529,13 +520,15 @@ def site_statistics(request):
     # Данные для графика выручки
     revenue_data = []
     if selected_event:
-        # График для конкретного мероприятия
         ticket_data = (
             Ticket.objects
             .filter(event=selected_event)
             .annotate(day=TruncDay('purchased_at'))
             .values('day')
-            .annotate(total=Sum(F('event__price') * F('quantity')))
+            .annotate(
+                total=Sum(F('event__price') * F('quantity')),
+                tickets_sold=Sum('quantity')
+            )
         )
         payment_data = (
             PaymentHistory.objects
@@ -544,20 +537,27 @@ def site_statistics(request):
             .values('day')
             .annotate(total=Sum('amount'))
         )
-        # Объединяем данные и преобразуем day в строку
         combined_data = {}
         for item in ticket_data:
             day_str = item['day'].strftime('%Y-%m-%d') if item['day'] else None
             if day_str:
-                combined_data[day_str] = combined_data.get(day_str, 0) + (item['total'] or 0)
+                combined_data[day_str] = {
+                    'total': combined_data.get(day_str, {}).get('total', 0) + (item['total'] or 0),
+                    'tickets_sold': item['tickets_sold'] or 0
+                }
         for item in payment_data:
             day_str = item['day'].strftime('%Y-%m-%d') if item['day'] else None
             if day_str:
-                combined_data[day_str] = combined_data.get(day_str, 0) + (item['total'] or 0)
-        revenue_data = [{'day': day, 'total': total} for day, total in combined_data.items()]
+                combined_data[day_str] = {
+                    'total': combined_data.get(day_str, {}).get('total', 0) + (item['total'] or 0),
+                    'tickets_sold': combined_data.get(day_str, {}).get('tickets_sold', 0)
+                }
+        revenue_data = [
+            {'day': day, 'total': float(data['total']), 'tickets_sold': data['tickets_sold']}
+            for day, data in combined_data.items()
+        ]
         revenue_data.sort(key=lambda x: x['day'])
     else:
-        # Общий график по всем источникам
         hall_data = (
             HallBooking.objects
             .annotate(day=TruncDay('date'))
@@ -568,7 +568,10 @@ def site_statistics(request):
             Ticket.objects
             .annotate(day=TruncDay('purchased_at'))
             .values('day')
-            .annotate(total=Sum(F('event__price') * F('quantity')))
+            .annotate(
+                total=Sum(F('event__price') * F('quantity')),
+                tickets_sold=Sum('quantity')
+            )
         )
         payment_data = (
             PaymentHistory.objects
@@ -576,21 +579,32 @@ def site_statistics(request):
             .values('day')
             .annotate(total=Sum('amount'))
         )
-        # Объединяем данные и преобразуем day в строку
         combined_data = {}
         for item in hall_data:
             day_str = item['day'].strftime('%Y-%m-%d') if item['day'] else None
             if day_str:
-                combined_data[day_str] = combined_data.get(day_str, 0) + (item['total'] or 0)
+                combined_data[day_str] = {
+                    'total': combined_data.get(day_str, {}).get('total', 0) + (item['total'] or 0),
+                    'tickets_sold': combined_data.get(day_str, {}).get('tickets_sold', 0)
+                }
         for item in ticket_data:
             day_str = item['day'].strftime('%Y-%m-%d') if item['day'] else None
             if day_str:
-                combined_data[day_str] = combined_data.get(day_str, 0) + (item['total'] or 0)
+                combined_data[day_str] = {
+                    'total': combined_data.get(day_str, {}).get('total', 0) + (item['total'] or 0),
+                    'tickets_sold': item['tickets_sold'] or 0
+                }
         for item in payment_data:
             day_str = item['day'].strftime('%Y-%m-%d') if item['day'] else None
             if day_str:
-                combined_data[day_str] = combined_data.get(day_str, 0) + (item['total'] or 0)
-        revenue_data = [{'day': day, 'total': total} for day, total in combined_data.items()]
+                combined_data[day_str] = {
+                    'total': combined_data.get(day_str, {}).get('total', 0) + (item['total'] or 0),
+                    'tickets_sold': combined_data.get(day_str, {}).get('tickets_sold', 0)
+                }
+        revenue_data = [
+            {'day': day, 'total': float(data['total']), 'tickets_sold': data['tickets_sold']}
+            for day, data in combined_data.items()
+        ]
         revenue_data.sort(key=lambda x: x['day'])
 
     # Логирование для отладки
@@ -603,7 +617,7 @@ def site_statistics(request):
         'total_events': total_events_count,
         'total_bookings': total_bookings,
         'total_revenue': total_revenue,
-        'revenue_data': revenue_data,
+        'revenue_data': json.dumps(revenue_data),
         'all_events': all_events,
         'selected_event': selected_event,
         'total_tickets_sold': total_tickets_sold,
@@ -757,3 +771,24 @@ def process_single_payment(request, item_id):
         messages.error(request, 'Ошибка при оплате билета. Пожалуйста, попробуйте позже.')
 
     return redirect('view_cart')
+
+
+
+
+@login_required
+def user_chat(request):
+    # Создаем чат для пользователя, если его нет
+    chat, created = Chat.objects.get_or_create(user=request.user)
+    messages = chat.messages.order_by('timestamp')
+    return render(request, 'chat/user_chat.html', {'chat': chat, 'messages': messages})
+
+@staff_member_required
+def admin_chat_list(request):
+    chats = Chat.objects.all().prefetch_related('messages')
+    return render(request, 'chat/admin_chat_list.html', {'chats': chats})
+
+@staff_member_required
+def admin_chat(request, chat_id):
+    chat = Chat.objects.get(id=chat_id)
+    messages = chat.messages.order_by('timestamp')
+    return render(request, 'chat/admin_chat.html', {'chat': chat, 'messages': messages})
