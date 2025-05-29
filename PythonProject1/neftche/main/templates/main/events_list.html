@@ -2,14 +2,23 @@
 {% block title %}События{% endblock %}
 {% block content %}
 <h1>События</h1>
-<ul class="list-group">
-  {% for events in events_list %}
-    <li class="list-group-item">
-      <a href="{% url 'events_detail' events.id %}">{{ events.title }}</a>
-      <span class="text-muted float-end">{{ events.data|date:"d.m.Y" }}</span>
-    </li>
-  {% empty %}
-    <li class="list-group-item">Нет событий.</li>
-  {% endfor %}
-</ul>
+<div class="row">
+    <div class="d-flex" style="gap: 15px;">
+        {% for event in events_list %}
+        <div class="col-md-4 event-container">
+            <div class="card home_card">
+                {% if event.image %}
+                    <img src="{{ event.image.url }}" class="card-img-top">
+                {% endif %}
+                <div class="card-body">
+                    <h6 class="card-title">{{ event.title }}</h6>
+                    <p class="card-text">{{ event.data|date:"d.m.Y H:i" }}</p>
+                    <p class="card-text">{{ event.price|truncatewords:20 }} ₽</p>
+                    <a href="{% url 'events_detail' event.id %}" class="btn btn-primary">Подробнее</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

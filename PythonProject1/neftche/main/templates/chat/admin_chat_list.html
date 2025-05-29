@@ -12,7 +12,7 @@
         {% for chat in chats %}
             <li>
                 <a href="{% url 'admin_chat' chat.id %}">Чат с {{ chat.user.username }}</a>
-                (Последнее сообщение: {{ chat.messages.last.timestamp|default:"Нет сообщений" }})
+                (Последнее сообщение: {{ chat.messages.last.content|default:"Нет сообщений" }} {{chat.messages.last.timestamp}})
             </li>
         {% endfor %}
     </ul>

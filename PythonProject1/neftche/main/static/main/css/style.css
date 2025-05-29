@@ -1,7 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap');
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: Unbounded, sans-serif;
 }
 
 .logo_img {
@@ -9,9 +12,12 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f9fafb;
     color: #333;
+}
+
+.header-container {
+    background-сщдщк: #333;
 }
 
 .header {
