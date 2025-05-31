@@ -10,7 +10,7 @@
             <h3 class="">{{ ticket.event.title }}</h3>
         </div>
         <div class="card-body">
-            <div class="row">
+            <div class="row d-flex" style="flex-wrap: wrap;">
                 <div class="col-md-6">
                     <p><strong>Мероприятие:</strong> {{ ticket.event.title }}</p>
                     <p><strong>Количество:</strong> {{ ticket.quantity }}</p>
@@ -39,7 +39,7 @@
 
 <style>
     .qr-code-container {
-        padding: 15px;
+        padding: 10px;
         border: 1px solid #eee;
         border-radius: 5px;
         display: inline-block;

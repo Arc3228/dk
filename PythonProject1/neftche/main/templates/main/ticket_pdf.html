@@ -1,12 +1,17 @@
 <!-- main/templates/main/ticket_pdf.html -->
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <title>Билет</title>
     <style>
+        @font-face {
+            font-family: 'Unbounded';
+            src: url('{% static 'main/fonts/Unbounded-Regular.ttf' %}') format('truetype');
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Unbounded', sans-serif;
             padding: 20px;
         }
 

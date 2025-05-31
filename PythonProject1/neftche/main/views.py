@@ -1,9 +1,19 @@
 import base64
+
+from reportlab.lib.utils import ImageReader
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import cm
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+import io
 import json
 import logging
+import os
 from datetime import datetime, timedelta, timezone
 from io import BytesIO
 import qrcode
+from django.conf import settings
 from django.db.models.functions import TruncDay
 from django.template.loader import get_template
 from django.utils import timezone
@@ -217,45 +227,115 @@ def ticket_detail(request, ticket_id):
     return render(request, 'main/ticket_detail.html', context)
 
 
+# Регистрируем кириллический шрифт с абсолютным путем
+font_path = os.path.join('main', 'static', 'main', 'fonts', 'Unbounded-Regular.ttf')
+pdfmetrics.registerFont(TTFont('Unbounded', font_path))
+
+
 @login_required
 def download_ticket(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id, user=request.user)
     seats = ticket.seats.all()
     event = ticket.event
 
-    # Генерация QR-кода
-    qr_data = f"Билет ID: {ticket.id}\nМероприятие: {event.title}\nВладелец: {request.user.username}\n"
+    # Создаем буфер для PDF
+    buffer = io.BytesIO()
+
+    # Создаем PDF-документ
+    p = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+
+    # Устанавливаем кириллический шрифт
+    p.setFont("Unbounded", 12)
+
+    # Заголовок
+    p.setFont("Unbounded", 18)
+    p.drawCentredString(width / 2, height - 2 * cm, "БИЛЕТ НА МЕРОПРИЯТИЕ")
+    p.line(1 * cm, height - 2.5 * cm, width - 1 * cm, height - 2.5 * cm)
+
+    # Информация о билете
+    y_position = height - 4 * cm
+
+    # Основная информация
+    p.drawString(2 * cm, y_position, f"Мероприятие: {event.title}")
+    y_position -= 0.7 * cm
+    p.drawString(2 * cm, y_position, f"Дата проведения: {event.data.strftime('%d.%m.%Y %H:%M')}")
+    y_position -= 0.7 * cm
+    p.drawString(2 * cm, y_position, f"Дата покупки: {ticket.purchased_at.strftime('%d.%m.%Y %H:%M')}")
+    y_position -= 0.7 * cm
+
+    # Информация о владельце
+    p.setFont("Unbounded", 14)
+    p.drawString(2 * cm, y_position, "ДАННЫЕ ПОСЕТИТЕЛЯ:")
+    p.setFont("Unbounded", 12)
+    y_position -= 0.7 * cm
+    p.drawString(2 * cm, y_position, f"ФИО: {request.user.surname} {request.user.name} {request.user.lastname}")
+    y_position -= 1.2 * cm
+
+    # Информация о местах
     if seats.exists():
+        p.setFont("Unbounded", 14)
+        p.drawString(2 * cm, y_position, "МЕСТО:")
+        p.setFont("Unbounded", 12)
+        y_position -= 0.7 * cm
+
         for seat in seats:
-            qr_data += f"Место: {seat.row}-{seat.number}\n"
+            p.drawString(3 * cm, y_position, f"• Ряд {seat.row}, Место {seat.number}")
+            y_position -= 0.7 * cm
+    else:
+        p.setFont("Unbounded", 14)
+        p.drawString(2 * cm, y_position, "МЕСТА:")
+        p.setFont("Unbounded", 12)
+        y_position -= 0.7 * cm
+        p.drawString(3 * cm, y_position, "Не указаны")
+        y_position -= 0.7 * cm
+
+    # Генерация QR-кода
+    qr_data = f"Билет ID: {ticket.id}\nМероприятие: {event.title}\n"
+    qr_data += f"Посетитель: {request.user.surname} {request.user.name}\n"
+
+    if seats.exists():
+        qr_data += "Места:\n"
+        for seat in seats:
+            qr_data += f"  - Ряд {seat.row}, Место {seat.number}\n"
     else:
         qr_data += "Места: Не указаны\n"
 
     qr = qrcode.make(qr_data)
-    qr_bytes = BytesIO()
-    qr.save(qr_bytes, format='PNG')
-    qr_base64 = base64.b64encode(qr_bytes.getvalue()).decode('utf-8')
+    qr_buffer = io.BytesIO()
+    qr.save(qr_buffer, format='PNG')
+    qr_buffer.seek(0)
 
-    context = {
-        'ticket': ticket,
-        'event': event,
-        'user': request.user,
-        'seats': seats,
-        'qr_code': qr_base64,
-    }
+    # Создаем ImageReader из буфера
+    qr_image = ImageReader(qr_buffer)
 
-    template = get_template('main/ticket_pdf.html')
-    html = template.render(context)
+    # Размещаем QR-код в PDF
+    qr_size = 7 * cm
+    qr_x = width - 3 * cm - qr_size
+    qr_y = 3 * cm
+    p.drawImage(qr_image, qr_x, qr_y, width=qr_size, height=qr_size)
 
-    result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
+    # Добавляем подпись под QR-код
+    p.setFont("Unbounded", 10)
+    p.drawCentredString(width - 3 * cm - qr_size / 2, 2.5 * cm, "QR-код билета")
 
-    if not pdf.err:
-        response = HttpResponse(result.getvalue(), content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="ticket_{ticket_id}.pdf"'
-        return response
+    # Добавляем рамку
+    p.rect(1 * cm, 1 * cm, width - 2 * cm, height - 2 * cm)
 
-    return HttpResponse('Ошибка генерации PDF', status=500)
+    # Завершаем PDF
+    p.showPage()
+    p.save()
+
+    # Возвращаем PDF как ответ
+    buffer.seek(0)
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="ticket_{ticket_id}.pdf"'
+    return response
+
+
+
+def download_ticket2(req):
+    return render(req, 'main/ticket_pdf.html')
 
 
 @login_required

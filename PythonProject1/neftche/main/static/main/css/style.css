@@ -184,3 +184,7 @@ input[type="submit"]:hover,
 .chat_link {
 text-decoration: underline;
 }
+
+#message-input {
+    width: 88%
+}
