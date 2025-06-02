@@ -334,9 +334,6 @@ def download_ticket(request, ticket_id):
 
 
 
-def download_ticket2(req):
-    return render(req, 'main/ticket_pdf.html')
-
 
 @login_required
 def profile(request):

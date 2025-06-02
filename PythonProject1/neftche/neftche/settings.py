@@ -141,10 +141,33 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
+
+# --- Базовая конфигурация отправки почты ---
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.yandex.ru'  # Хост Яндекса
-EMAIL_PORT = 465  # Порт для SSL
-EMAIL_USE_SSL = True  # Для Яндекса используется SSL (не TLS!)
-EMAIL_HOST_USER = 'dronovrafael@yandex.ru'  # Полный email Яндекс-аккаунта
-EMAIL_HOST_PASSWORD = 'dddvarclnuxouzde'  # Пароль приложения (см. шаг 2)
-DEFAULT_FROM_EMAIL = 'dronovrafael@yandex.ru'  # Должен совпадать с EMAIL_HOST_USER
+EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+
+EMAIL_HOST_USER = os.getenv('django_email@mail.ru')        # например, yourname@mail.ru
+EMAIL_HOST_PASSWORD = os.getenv('70SGhSKWx08hYmnZy3Nq')
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# --- Дополнительно (опционально) ---
+# При возникновении проблем можно увеличить уровень логирования почты:
+# (читая логи, вы увидите, какой запрос отправляет Django и сервер SMTP)
+LOGGING = {
+    'version': 1,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.core.mail': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}
