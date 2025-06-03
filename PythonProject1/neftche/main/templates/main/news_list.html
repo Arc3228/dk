@@ -7,10 +7,10 @@
         <div class=" d-flex" style="gap: 15px; flex-wrap: wrap;">
             {% for news in news_list %}
             <div class="card home_card">
-                <img src="{{ news.image.url }}" class="card-img-top">
+                <img src="{{ news.image.url }}" class="news-card-img-top">
                 <div class="card-body">
-                    <h6 class="card-title">{{ news.title }}</h6>
-                    <p class="card-text">{{ news.content|truncatewords:20 }}</p>
+                    <h6 class="news-card-title">{{ news.title }}</h6>
+                    <p class="news-card-text">{{ news.content|truncatewords:20 }}</p>
                     <a href="{% url 'news_detail' news.id %}" class="btn btn-primary">Читать далее</a>
                 </div>
             </div>

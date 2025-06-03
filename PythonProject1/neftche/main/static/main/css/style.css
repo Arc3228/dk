@@ -1,5 +1,47 @@
 @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap');
 
+@font-face {
+  font-weight: 400;
+  font-family: Unbounded;
+  src: url("../fonts/Unbounded-Regular.ttf");
+}
+
+@font-face {
+  font-weight: 500;
+  font-family: Unbounded;
+  src: url("../fonts/Unbounded-Regular.ttf");
+}
+
+@font-face {
+  font-weight: 700;
+  font-family: Unbounded;
+  src: url("../fonts/Unbounded-Bold.ttf");
+}
+
+@font-face {
+  font-weight: 800;
+  font-family: Unbounded;
+  src: url("../fonts/Unbounded-ExtraBold.ttf");
+}
+
+@font-face {
+  font-weight: 900;
+  font-family: Unbounded;
+  src: url("../fonts/Unbounded-Black.ttf");
+}
+
+@font-face {
+  font-weight: 600;
+  font-family: Unbounded;
+  src: url("../fonts/Unbounded-SemiBold.ttf");
+}
+
+@font-face {
+  font-weight: 300;
+  font-family: Unbounded;
+  src: url("../fonts/Unbounded-Light.ttf");
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -187,4 +229,31 @@ text-decoration: underline;
 
 #message-input {
     width: 88%
+}
+
+.btn-edit {
+ font-size: 10px;
+ padding: 5px 10px;
+}
+
+.btn-delete {
+    font-size: 10px;
+    padding: 5px 10px;
+}
+
+.home_card {
+    max-height: 550px;
+}
+
+.news-card-text {
+    max-height: 100px;
+    overflow: hidden
+}
+
+.news-card-img-top {
+max-height: 250px;
+}
+
+select {
+max-width: 200px;
 }

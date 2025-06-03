@@ -27,8 +27,8 @@
                 <td>{{ booking.check_oborydovanie|yesno:"Да,Нет" }}</td>
                 <td>{{ booking.price|intcomma }} ₽</td>
                 <td>
-                    <a href="{% url 'edit_booking' booking.id %}" class="btn btn-sm btn-primary">Редактировать</a>
-                    <a href="{% url 'delete_booking' booking.id %}" class="btn btn-sm btn-danger">Удалить</a>
+                    <a href="{% url 'edit_booking' booking.id %}" class="btn btn-sm btn-edit btn-primary">Редактировать</a>
+                    <a href="{% url 'delete_booking' booking.id %}" class="btn btn-sm btn-delete btn-danger">Удалить</a>
                 </td>
             </tr>
             {% empty %}
