@@ -4,15 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="69a2fa03-f5fd-4a77-a61c-77c8b0116b0c" name="Changes" comment="почта">
+    <list default="true" id="69a2fa03-f5fd-4a77-a61c-77c8b0116b0c" name="Changes" comment=".">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/db.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/static/main/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/static/main/css/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/events_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/events_detail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/events_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/events_list.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/hall_bookings.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/hall_bookings.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/chat/admin_chat.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/chat/admin_chat.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/chat/user_chat.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/chat/user_chat.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/home.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/news_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/templates/main/news_list.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PythonProject1/neftche/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/PythonProject1/neftche/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -302,7 +301,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748875425273</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary=".">
+      <option name="closed" value="true" />
+      <created>1748942670202</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1748942670202</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -318,7 +325,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Вывод новостей" />
-    <MESSAGE value="." />
     <MESSAGE value="События" />
     <MESSAGE value="Цена у билетов" />
     <MESSAGE value="Бронь зала" />
@@ -332,6 +338,7 @@
     <MESSAGE value="чат + график в статистике" />
     <MESSAGE value="чат стили" />
     <MESSAGE value="почта" />
-    <option name="LAST_COMMIT_MESSAGE" value="почта" />
+    <MESSAGE value="." />
+    <option name="LAST_COMMIT_MESSAGE" value="." />
   </component>
 </project>

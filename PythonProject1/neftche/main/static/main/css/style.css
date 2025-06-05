@@ -257,3 +257,7 @@ max-height: 250px;
 select {
 max-width: 200px;
 }
+
+.events_list_title {
+margin-top: 25px;
+}

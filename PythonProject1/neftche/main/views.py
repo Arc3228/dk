@@ -1,5 +1,5 @@
 import base64
-
+from decimal import Decimal
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
@@ -267,7 +267,7 @@ def download_ticket(request, ticket_id):
     # Информация о владельце
     p.setFont("Unbounded", 14)
     p.drawString(2 * cm, y_position, "ДАННЫЕ ПОСЕТИТЕЛЯ:")
-    p.setFont("Unbounded", 12)
+    p.setFont("Unbounded", 14)
     y_position -= 0.7 * cm
     p.drawString(2 * cm, y_position, f"ФИО: {request.user.surname} {request.user.name} {request.user.lastname}")
     y_position -= 1.2 * cm
@@ -292,10 +292,10 @@ def download_ticket(request, ticket_id):
 
     # Генерация QR-кода
     qr_data = f"Билет ID: {ticket.id}\nМероприятие: {event.title}\n"
-    qr_data += f"Посетитель: {request.user.surname} {request.user.name}\n"
+    qr_data += f"Посетитель: {request.user.surname} {request.user.name} {request.user.lastname}\n"
 
     if seats.exists():
-        qr_data += "Места:\n"
+        qr_data += "Место:"
         for seat in seats:
             qr_data += f"  - Ряд {seat.row}, Место {seat.number}\n"
     else:
@@ -310,14 +310,14 @@ def download_ticket(request, ticket_id):
     qr_image = ImageReader(qr_buffer)
 
     # Размещаем QR-код в PDF
-    qr_size = 7 * cm
-    qr_x = width - 3 * cm - qr_size
+    qr_size = 9 * cm
+    qr_x = width - 6 * cm - qr_size
     qr_y = 3 * cm
     p.drawImage(qr_image, qr_x, qr_y, width=qr_size, height=qr_size)
 
     # Добавляем подпись под QR-код
     p.setFont("Unbounded", 10)
-    p.drawCentredString(width - 3 * cm - qr_size / 2, 2.5 * cm, "QR-код билета")
+    p.drawCentredString(width - 6 * cm - qr_size / 2, 2.5 * cm, "QR-код билета")
 
     # Добавляем рамку
     p.rect(1 * cm, 1 * cm, width - 2 * cm, height - 2 * cm)
@@ -463,8 +463,21 @@ def edit_booking(request, booking_id):
 @staff_member_required
 def delete_booking(request, booking_id):
     booking = get_object_or_404(HallBooking, id=booking_id)
+
     if request.method == 'POST':
-        booking.delete()
+        # Используем транзакцию для гарантии целостности данных
+        with transaction.atomic():
+            # Получаем пользователя и сумму до удаления брони
+            user = booking.user
+            refund_amount = Decimal(booking.price)
+
+            # Удаляем бронирование
+            booking.delete()
+
+            # Возвращаем средства на баланс пользователя
+            user.balance += refund_amount
+            user.save()
+
         return redirect('hall_bookings')
     return render(request, 'main/delete_booking.html', {'booking': booking})
 
