@@ -119,12 +119,12 @@ def login_view(request):
     return render(request, 'auth/login.html', {'form': form})
 
 
-@login_required
+@staff_member_required
 def admin_panel(request):
     return render(request, 'admin/admin_panel.html')
 
 
-@login_required
+@staff_member_required
 def news_create(request):
     if request.method == 'POST':
         form = NewsForm(request.POST, request.FILES)
@@ -138,7 +138,7 @@ def news_create(request):
     return render(request, 'main/news_form.html', {'form': form})
 
 
-@login_required
+@staff_member_required
 def news_edit(request, pk):
     news = News.objects.get(pk=pk)
     if request.user != news.author:
@@ -153,7 +153,7 @@ def news_edit(request, pk):
     return render(request, 'main/news_form.html', {'form': form})
 
 
-@login_required
+@staff_member_required
 def news_delete(request, pk):
     news = News.objects.get(pk=pk)
     if request.user == news.author:
@@ -161,7 +161,7 @@ def news_delete(request, pk):
     return redirect('home')
 
 
-@login_required
+@staff_member_required
 def events_create(request):
     if request.method == 'POST':
         form = EventsForm(request.POST, request.FILES)
@@ -178,7 +178,7 @@ def events_create(request):
         form = EventsForm()
     return render(request, 'main/events_form.html', {'form': form})
 
-@login_required
+@staff_member_required
 def events_edit(request, pk):
     events = Events.objects.get(pk=pk)
     if request.user != events.author:
@@ -193,7 +193,7 @@ def events_edit(request, pk):
     return render(request, 'main/events_form.html', {'form': form})
 
 
-@login_required
+@staff_member_required
 def events_delete(request, pk):
     events = Events.objects.get(pk=pk)
     if request.user == events.author:
@@ -437,7 +437,7 @@ def book_hall(request):
 
 
 
-@login_required
+@staff_member_required
 def hall_bookings_view(request):
     bookings = HallBooking.objects.all().filter().order_by('date')
     return render(request, 'main/hall_bookings.html', {'bookings': bookings})
